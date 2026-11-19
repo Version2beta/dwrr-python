@@ -8,26 +8,76 @@ from ._contracts import Item, Scheduled, SchedulerError, MAX_COST, MAX_QUANTUM, 
 from ._state import State, Queue
 
 
+def _check_amount(value: int, limit: int, zero_code: str, large_code: str) -> None:
+    """Validate a cost or quantum in the order of SPEC §3 (type, sign, zero, range)."""
+    if type(value) is not int:
+        raise TypeError("amount must be a built-in int")
+    if value < 0:
+        raise ValueError("amount must be nonnegative")
+    if value == 0:
+        raise SchedulerError(zero_code)
+    if value > limit:
+        raise SchedulerError(large_code)
+
+
 class Engine(Generic[T]):
     def __init__(self, count: int):
         """T1: strict nonnegative count; create count default queues (§4)."""
-        self.state = State[T]()
+        if type(count) is not int:
+            raise TypeError("count must be a built-in int")
+        if count < 0:
+            raise ValueError("count must be nonnegative")
+        self.state = State[T](queues=[Queue[T]() for _ in range(count)])
+
+    def _queue(self, queue: int) -> Queue[T]:
+        """Check index type, then range, before any other argument is inspected."""
+        if type(queue) is not int:
+            raise TypeError("queue index must be a built-in int")
+        if not 0 <= queue < len(self.state.queues):
+            raise SchedulerError("invalid_index")
+        return self.state.queues[queue]
 
     def enqueue(self, queue: int, items: list[Item[T]] | tuple[Item[T], ...]) -> None:
         """T1: index first, validate entire batch in order, append atomically (§3)."""
-        pass
+        target = self._queue(queue)
+        if type(items) is not list and type(items) is not tuple:
+            raise TypeError("batch must be a list or tuple")
+        accepted: list[Item[T]] = []
+        for item in items:
+            # Exact type: a subclass could run code (e.g. a property) under the lock.
+            if type(item) is not Item:
+                raise TypeError("batch element must be an Item")
+            _check_amount(item.cost, MAX_COST, "zero_cost", "cost_too_large")
+            accepted.append(item)
+        target.items.extend(accepted)
 
     def set_quantum(self, queue: int, quantum: int) -> None:
         """T1: index first; change only quantum, preserve visit/credit (§4)."""
-        pass
+        target = self._queue(queue)
+        _check_amount(quantum, MAX_QUANTUM, "zero_quantum", "quantum_too_large")
+        target.quantum = quantum
 
     def add_queue(self) -> int:
         """T1: append default queue, return old count, preserve visit/cursor (§4)."""
-        return 0
+        index = len(self.state.queues)
+        self.state.queues.append(Queue[T]())
+        return index
 
     def remove_queue(self) -> Queue[T] | None:
         """T1: repair state; return retired queue for facade release after unlock."""
-        return None
+        state = self.state
+        if not state.queues:
+            return None
+        last = len(state.queues) - 1
+        if state.active and state.cursor == last:
+            state.active = False
+            state.cursor = 0
+        retired = state.queues.pop()
+        if last == 0:
+            state.cursor = 0
+        elif state.cursor >= last:
+            state.cursor %= last
+        return retired
 
     def remove_head(self, queue: int) -> Item[T] | None:
         """T2: withdraw FIFO without spending credit; close only if emptied (§4)."""
