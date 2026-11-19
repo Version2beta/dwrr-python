@@ -12,3 +12,6 @@ Remains: T3 (take) is still a stub; T2 did not run the full corpus or concurrenc
 T1: Construct/validate state, atomic enqueue/reweight, add/remove queues
 Changed dwrr/_engine.py: accept Item subclasses with isinstance while preserving index-first validation, strict costs and atomic enqueue. Evidence: python3 -B scripts/judge.py state (9/9 PASS), python3 -B scripts/judge.py withdraw (4/4 PASS), python3 -B scripts/kit_check.py (PASS).
 Remains: later scheduling and adapter work unchanged; whole-tree behavioral acceptance not run. Blocked: nothing.
+T3: Implement exact resumable take and direct skip; full native corpus/oracle/concurrency
+Changed dwrr/_engine.py: strict atomic take validation, FIFO cyclic selection preserving active visits, and exact whole-idle-cycle skipping without payload operations. Evidence: exact timeout-wrapped schedule command 14/14 PASS (including all 1,839 cases / 44,728 steps, bounded oracle and concurrency); earlier state 9/9 PASS, withdraw 4/4 PASS; kit_check PASS.
+Remains: T4 adapter dispatch and T5 whole-tree behavioral acceptance untouched and not validated. Blocked: nothing.

@@ -106,4 +106,54 @@ class Engine(Generic[T]):
 
     def take(self, n: int) -> list[Scheduled[T]]:
         """T3: exact cyclic scheduling, resume active visit, direct idle skip (§§4–5)."""
-        return []
+        if type(n) is not int:
+            raise TypeError("take limit must be a built-in int")
+        if n < 0:
+            raise SchedulerError("negative_take")
+        out: list[Scheduled[T]] = []
+        if n == 0:
+            return out
+
+        state = self.state
+        queues = state.queues
+        busy = sum(bool(queue.items) for queue in queues)
+        while len(out) < n and busy:
+            if not state.active:
+                # Only skip whole cycles whose final grants still leave every
+                # busy head blocked. An already-affordable head forbids a skip
+                # (withdrawal can expose one). The cursor stays unchanged, so
+                # ties are resolved by normal cyclic visits after the skip.
+                rounds = min(
+                    (queue.items[0].cost - queue.credit - 1) // queue.quantum
+                    for queue in queues if queue.items
+                )
+                if rounds > 0:
+                    for queue in queues:
+                        if queue.items:
+                            queue.credit += rounds * queue.quantum
+
+            index = state.cursor
+            target = queues[index]
+            if not state.active:
+                if not target.items:
+                    target.credit = 0
+                    state.cursor = (index + 1) % len(queues)
+                    continue
+                target.credit += target.quantum
+                state.active = True
+
+            head = target.items[0]
+            if target.credit < head.cost:
+                state.active = False
+                state.cursor = (index + 1) % len(queues)
+                continue
+
+            target.credit -= head.cost
+            target.items.popleft()
+            out.append(Scheduled(index, head.value, head.cost))
+            if not target.items:
+                busy -= 1
+                self._reset_emptied(index)
+            # Otherwise preserve the active visit, even at the retrieval limit
+            # or when its next head blocks. A later take resumes without a grant.
+        return out
