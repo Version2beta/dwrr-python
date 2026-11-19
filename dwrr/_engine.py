@@ -79,13 +79,31 @@ class Engine(Generic[T]):
             state.cursor %= last
         return retired
 
+    def _reset_emptied(self, index: int) -> None:
+        """Reset an emptied queue's credit; close its visit only if it is the active cursor queue."""
+        state = self.state
+        state.queues[index].credit = 0
+        if state.active and state.cursor == index:
+            state.active = False
+            state.cursor = (state.cursor + 1) % len(state.queues)
+
     def remove_head(self, queue: int) -> Item[T] | None:
         """T2: withdraw FIFO without spending credit; close only if emptied (§4)."""
-        return None
+        target = self._queue(queue)
+        if not target.items:
+            return None
+        head = target.items.popleft()
+        if not target.items:
+            self._reset_emptied(queue)
+        return head
 
     def drain_queue(self, queue: int) -> list[Item[T]]:
         """T2: withdraw FIFO, reset credit, close active matching visit (§4)."""
-        return []
+        target = self._queue(queue)
+        drained = list(target.items)
+        target.items.clear()
+        self._reset_emptied(queue)
+        return drained
 
     def take(self, n: int) -> list[Scheduled[T]]:
         """T3: exact cyclic scheduling, resume active visit, direct idle skip (§§4–5)."""
