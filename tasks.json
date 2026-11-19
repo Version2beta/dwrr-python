@@ -18,13 +18,14 @@
       "expect": [
         "^PASS tests\\.test_state\\.StateTests\\.test_constructor_and_queue_defaults$",
         "^PASS tests\\.test_state\\.StateTests\\.test_records_and_payloads$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_enqueue_item_subclass_preserves_payload_and_cost$",
         "^PASS tests\\.test_state\\.StateTests\\.test_enqueue_atomic_first_invalid$",
         "^PASS tests\\.test_state\\.StateTests\\.test_index_precedence$",
         "^PASS tests\\.test_state\\.StateTests\\.test_python_batch_domain$",
         "^PASS tests\\.test_state\\.StateTests\\.test_quantum_validation_preserves_visit$",
         "^PASS tests\\.test_state\\.StateTests\\.test_remove_queue_repairs_cursor_and_reuse$",
         "^PASS tests\\.test_state\\.StateTests\\.test_remove_queue_releases_payload$",
-        "^PASS group state: 8 tests, no skips$"
+        "^PASS group state: 9 tests, no skips$"
       ],
       "tier": "normal"
     },
@@ -86,6 +87,7 @@
       "expect": [
         "^PASS tests\\.test_state\\.StateTests\\.test_constructor_and_queue_defaults$",
         "^PASS tests\\.test_state\\.StateTests\\.test_records_and_payloads$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_enqueue_item_subclass_preserves_payload_and_cost$",
         "^PASS tests\\.test_state\\.StateTests\\.test_enqueue_atomic_first_invalid$",
         "^PASS tests\\.test_state\\.StateTests\\.test_index_precedence$",
         "^PASS tests\\.test_state\\.StateTests\\.test_python_batch_domain$",
@@ -113,7 +115,7 @@
         "^PASS tests\\.test_driver\\.DriverTests\\.test_huge_json_integer_roundtrip_without_global_setting$",
         "^PASS tests\\.test_driver\\.DriverTests\\.test_protocol_first_all_items_and_json_domain$",
         "^PASS tests\\.test_driver\\.DriverTests\\.test_unused_fields_wire_uint64_and_errors_continue$",
-        "^PASS group all: 30 tests, no skips$",
+        "^PASS group all: 31 tests, no skips$",
         "^PASS: 1839 cases, 44728 steps, 7 files$",
         "^PASS: 41 of 41 checks passed$",
         "^PASS archives: pure Python wheel and sdist, MIT, no runtime dependencies$",

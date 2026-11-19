@@ -6,7 +6,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 GROUPS = {
-    'state': [('tests.test_state', 8)],
+    'state': [('tests.test_state', 9)],
     'withdraw': [('tests.test_withdraw', 4)],
     'schedule': [('tests.test_schedule', 9), ('tests.test_concurrency', 4), ('tests.test_corpus', 1)],
     'driver': [('tests.test_driver', 4)],

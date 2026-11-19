@@ -1,0 +1,149 @@
+Focused Item-subclass correction at base 32cf887854b58985573bcf70fe60bd4792c3fa37
+No implementation edits or new coder/model calls.
+
+=== current loop-written Engine ===
+$ python3 -B -m unittest tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost
+exit: 1
+stdout:
+stderr:
+E
+======================================================================
+ERROR: test_enqueue_item_subclass_preserves_payload_and_cost (tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 49, in test_enqueue_item_subclass_preserves_payload_and_cost
+    self.assertIsNone(s.enqueue(0, batch))
+                      ~~~~~~~~~^^^^^^^^^^
+  File "/Users/rob/Development/dwrr-python/dwrr/__init__.py", line 24, in enqueue
+    return self._engine.enqueue(queue, items)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/rob/Development/dwrr-python/dwrr/_engine.py", line 49, in enqueue
+    raise TypeError("batch element must be an Item")
+TypeError: batch element must be an Item
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)
+
+=== current loop-written Engine ===
+$ TASKS=.loop/item-subclass-T1.tasks.json bash scripts/loop.sh --check
+exit: 1
+stdout:
+FAIL  T1  Construct/validate state, atomic enqueue/reweight, add/remove queues
+stderr:
+loop: test.0 exited 1: python3 -B scripts/judge.py state
+
+=== current T1 test stream ===
+$ python3 -B scripts/judge.py state (runner-captured)
+exit: 1
+stdout:
+PASS tests.test_state.StateTests.test_constructor_and_queue_defaults
+PASS tests.test_state.StateTests.test_enqueue_atomic_first_invalid
+PASS tests.test_state.StateTests.test_index_precedence
+PASS tests.test_state.StateTests.test_python_batch_domain
+PASS tests.test_state.StateTests.test_quantum_validation_preserves_visit
+PASS tests.test_state.StateTests.test_records_and_payloads
+PASS tests.test_state.StateTests.test_remove_queue_releases_payload
+PASS tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse
+stderr:
+test_constructor_and_queue_defaults (tests.test_state.StateTests.test_constructor_and_queue_defaults) ... ok
+test_enqueue_atomic_first_invalid (tests.test_state.StateTests.test_enqueue_atomic_first_invalid) ... ok
+test_enqueue_item_subclass_preserves_payload_and_cost (tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost) ... ERROR
+test_index_precedence (tests.test_state.StateTests.test_index_precedence) ... ok
+test_python_batch_domain (tests.test_state.StateTests.test_python_batch_domain) ... ok
+test_quantum_validation_preserves_visit (tests.test_state.StateTests.test_quantum_validation_preserves_visit) ... ok
+test_records_and_payloads (tests.test_state.StateTests.test_records_and_payloads) ... ok
+test_remove_queue_releases_payload (tests.test_state.StateTests.test_remove_queue_releases_payload) ... ok
+test_remove_queue_repairs_cursor_and_reuse (tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse) ... ok
+
+======================================================================
+ERROR: test_enqueue_item_subclass_preserves_payload_and_cost (tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 49, in test_enqueue_item_subclass_preserves_payload_and_cost
+    self.assertIsNone(s.enqueue(0, batch))
+                      ~~~~~~~~~^^^^^^^^^^
+  File "/Users/rob/Development/dwrr-python/dwrr/__init__.py", line 24, in enqueue
+    return self._engine.enqueue(queue, items)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/rob/Development/dwrr-python/dwrr/_engine.py", line 49, in enqueue
+    raise TypeError("batch element must be an Item")
+TypeError: batch element must be an Item
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.003s
+
+FAILED (errors=1)
+
+=== temporary private-reference Engine only ===
+$ python3 -B -m unittest tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost
+exit: 0
+stdout:
+stderr:
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+
+=== temporary private-reference Engine only ===
+$ TASKS=.loop/item-subclass-T1.tasks.json bash scripts/loop.sh --check
+exit: 0
+stdout:
+pass  T1  Construct/validate state, atomic enqueue/reweight, add/remove queues
+stderr:
+
+=== reference T1 test stream ===
+$ python3 -B scripts/judge.py state (runner-captured)
+exit: 0
+stdout:
+PASS tests.test_state.StateTests.test_constructor_and_queue_defaults
+PASS tests.test_state.StateTests.test_enqueue_atomic_first_invalid
+PASS tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost
+PASS tests.test_state.StateTests.test_index_precedence
+PASS tests.test_state.StateTests.test_python_batch_domain
+PASS tests.test_state.StateTests.test_quantum_validation_preserves_visit
+PASS tests.test_state.StateTests.test_records_and_payloads
+PASS tests.test_state.StateTests.test_remove_queue_releases_payload
+PASS tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse
+PASS group state: 9 tests, no skips
+stderr:
+test_constructor_and_queue_defaults (tests.test_state.StateTests.test_constructor_and_queue_defaults) ... ok
+test_enqueue_atomic_first_invalid (tests.test_state.StateTests.test_enqueue_atomic_first_invalid) ... ok
+test_enqueue_item_subclass_preserves_payload_and_cost (tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost) ... ok
+test_index_precedence (tests.test_state.StateTests.test_index_precedence) ... ok
+test_python_batch_domain (tests.test_state.StateTests.test_python_batch_domain) ... ok
+test_quantum_validation_preserves_visit (tests.test_state.StateTests.test_quantum_validation_preserves_visit) ... ok
+test_records_and_payloads (tests.test_state.StateTests.test_records_and_payloads) ... ok
+test_remove_queue_releases_payload (tests.test_state.StateTests.test_remove_queue_releases_payload) ... ok
+test_remove_queue_repairs_cursor_and_reuse (tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.001s
+
+OK
+
+=== restored current loop-written Engine ===
+$ python3 -B scripts/judge.py withdraw
+exit: 0
+stdout:
+PASS tests.test_withdraw.WithdrawTests.test_drain_queue_closes_only_matching_visit
+PASS tests.test_withdraw.WithdrawTests.test_empty_drain_is_fresh_noop
+PASS tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty
+PASS tests.test_withdraw.WithdrawTests.test_withdraw_validation_atomic
+PASS group withdraw: 4 tests, no skips
+stderr:
+test_drain_queue_closes_only_matching_visit (tests.test_withdraw.WithdrawTests.test_drain_queue_closes_only_matching_visit) ... ok
+test_empty_drain_is_fresh_noop (tests.test_withdraw.WithdrawTests.test_empty_drain_is_fresh_noop) ... ok
+test_remove_head_preserves_credit_until_empty (tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty) ... ok
+test_withdraw_validation_atomic (tests.test_withdraw.WithdrawTests.test_withdraw_validation_atomic) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+
+Restored Engine SHA-256: 899826aae01ec23ed2d1418d4acb22f0f592d6024380088a63c3180050efec03
+PASS exact current Engine backup equals restored source and HEAD base bytes.
+PASS adapter and PROGRESS unchanged.

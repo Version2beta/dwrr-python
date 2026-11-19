@@ -39,6 +39,24 @@ class StateTests(unittest.TestCase):
         values[2].append(7)
         self.assertEqual(actual[2].value, [7])
 
+    def test_enqueue_item_subclass_preserves_payload_and_cost(self):
+        class ItemSubclass(Item):
+            pass
+        s = Scheduler(1)
+        payload = Opaque()
+        item = ItemSubclass(payload, 2**53 + 1)
+        for batch in ([item], (item,)):
+            self.assertIsNone(s.enqueue(0, batch))
+        queued = s._engine.state.queues[0].items
+        self.assertEqual(len(queued), 2)
+        for accepted in queued:
+            self.assertIs(accepted.value, payload)
+            self.assertEqual(accepted.cost, 2**53 + 1)
+        before = snapshot(s)
+        with self.assertRaises(TypeError):
+            s.enqueue(0, [ItemSubclass(payload, 1), object()])
+        self.assertEqual(snapshot(s), before)
+
     def test_enqueue_atomic_first_invalid(self):
         s = Scheduler(1)
         s.enqueue(0, [Item('kept', 1)])

@@ -1,4 +1,40 @@
-# Verified bounded kit — STOP before real coder loop
+# Kit verification record
+
+## Item-subclass judge correction after T2
+
+At loop-written HEAD `32cf887854b58985573bcf70fe60bd4792c3fa37` (T1 commit
+`308adfb`, then T2), review found enqueue used `type(item) is Item`, rejecting
+ordinary subclasses contrary to SPEC §3.4's `Item` instance contract. The old
+T1 tests missed this input. The parent stopped the runner before further writes.
+This correction changes only protected tests/judging/evidence, not coder code.
+
+`test_enqueue_item_subclass_preserves_payload_and_cost` now requires ordinary
+Item subclasses in both list and tuple batches, opaque payload identity and exact
+cost preservation; a later non-Item must still raise TypeError without appending
+a valid prefix. Existing wrong-element and strict integer rejection tests remain.
+Corrected counts: T1 has 9 tests, whole suite has 31. The new test ID is required
+by both T1 and T5 stdout expectations.
+
+The new targeted test and corrected T1 judge fail on the current loop-written
+code with `TypeError: batch element must be an Item`. The private reference
+already uses `isinstance(item, Item)`; no reference fix or product change was
+needed. Temporarily swapping only `_engine.py` from the private reference makes
+the targeted test and corrected T1 judge pass. The exact current loop-written
+Engine backup is restored, not the original stubs. No adapter or progress changes,
+new coder calls, pushes or publication are part of this correction.
+
+See `verification/item-subclass-correction.log` for commands, exit statuses and
+stdout/stderr. The T1-only `TASKS=.loop/item-subclass-T1.tasks.json` configuration
+retains the corrected T1 command/expectations and both kit checks under unchanged
+`loop.sh --check`; it avoids rerunning unrelated unfinished tasks. Full-suite,
+minimum-runtime and publication claims are not renewed by this focused correction.
+The next real runner will select the failing T1 regression for the coder to fix.
+
+## Historical preparation snapshot
+
+The following records describe kit preparation at `53d2fa1`, not the current
+partially implemented checkout or this correction's verification. In particular,
+its 30-test full-stage passes do not include the new subclass regression.
 
 **This is kit reachability evidence, not implemented-library completion.** The
 checkout deliberately retains stubs in `dwrr/_engine.py` and `scripts/_adapter.py`.
