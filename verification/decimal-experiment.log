@@ -1,0 +1,3 @@
+Default json.loads rejected 6000 digits; conversion limit: 4300
+PASS exact 6000-digit positive/negative roundtrip via 500-digit chunks
+PASS application-global conversion setting unchanged: 4300

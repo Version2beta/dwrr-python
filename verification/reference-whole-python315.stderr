@@ -1,0 +1,35 @@
+test_constructor_and_queue_defaults (tests.test_state.StateTests.test_constructor_and_queue_defaults) ... ok
+test_enqueue_atomic_first_invalid (tests.test_state.StateTests.test_enqueue_atomic_first_invalid) ... ok
+test_index_precedence (tests.test_state.StateTests.test_index_precedence) ... ok
+test_python_batch_domain (tests.test_state.StateTests.test_python_batch_domain) ... ok
+test_quantum_validation_preserves_visit (tests.test_state.StateTests.test_quantum_validation_preserves_visit) ... ok
+test_records_and_payloads (tests.test_state.StateTests.test_records_and_payloads) ... ok
+test_remove_queue_releases_payload (tests.test_state.StateTests.test_remove_queue_releases_payload) ... ok
+test_remove_queue_repairs_cursor_and_reuse (tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse) ... ok
+test_drain_queue_closes_only_matching_visit (tests.test_withdraw.WithdrawTests.test_drain_queue_closes_only_matching_visit) ... ok
+test_empty_drain_is_fresh_noop (tests.test_withdraw.WithdrawTests.test_empty_drain_is_fresh_noop) ... ok
+test_remove_head_preserves_credit_until_empty (tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty) ... ok
+test_withdraw_validation_atomic (tests.test_withdraw.WithdrawTests.test_withdraw_validation_atomic) ... ok
+test_take_example_exact_order (tests.test_schedule.ScheduleTests.test_take_example_exact_order) ... ok
+test_take_head_blocking_zero_huge_request (tests.test_schedule.ScheduleTests.test_take_head_blocking_zero_huge_request) ... ok
+test_take_independent_bounded_mixed_traces (tests.test_schedule.ScheduleTests.test_take_independent_bounded_mixed_traces) ... ok
+test_take_maximum_skip_and_tie_cursor (tests.test_schedule.ScheduleTests.test_take_maximum_skip_and_tie_cursor) ... ok
+test_take_payload_identity_no_effects_and_release (tests.test_schedule.ScheduleTests.test_take_payload_identity_no_effects_and_release) ... ok
+test_take_peak_credit_and_withdraw_exposed_head (tests.test_schedule.ScheduleTests.test_take_peak_credit_and_withdraw_exposed_head) ... ok
+test_take_resume_join_and_reweight (tests.test_schedule.ScheduleTests.test_take_resume_join_and_reweight) ... ok
+test_take_split_and_continuously_backlogged_fairness (tests.test_schedule.ScheduleTests.test_take_split_and_continuously_backlogged_fairness) ... ok
+test_take_validation_atomic (tests.test_schedule.ScheduleTests.test_take_validation_atomic) ... ok
+test_concurrent_batches_and_takes_conserve_fifo_without_interleaving (tests.test_concurrency.ConcurrencyTests.test_concurrent_batches_and_takes_conserve_fifo_without_interleaving) ... ok
+test_concurrent_take_returns_complete_serial_slices (tests.test_concurrency.ConcurrencyTests.test_concurrent_take_returns_complete_serial_slices) ... ok
+test_every_operation_lock_covers_entire_engine_call (tests.test_concurrency.ConcurrencyTests.test_every_operation_lock_covers_entire_engine_call) ... ok
+test_remove_queue_releases_payload_after_unlock (tests.test_concurrency.ConcurrencyTests.test_remove_queue_releases_payload_after_unlock) ... ok
+test_all_1839_cases_44728_steps_seven_files (tests.test_corpus.CorpusTests.test_all_1839_cases_44728_steps_seven_files) ... ok
+test_dispatch_every_operation_and_fresh_new (tests.test_driver.DriverTests.test_dispatch_every_operation_and_fresh_new) ... ok
+test_huge_json_integer_roundtrip_without_global_setting (tests.test_driver.DriverTests.test_huge_json_integer_roundtrip_without_global_setting) ... ok
+test_protocol_first_all_items_and_json_domain (tests.test_driver.DriverTests.test_protocol_first_all_items_and_json_domain) ... ok
+test_unused_fields_wire_uint64_and_errors_continue (tests.test_driver.DriverTests.test_unused_fields_wire_uint64_and_errors_continue) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.898s
+
+OK

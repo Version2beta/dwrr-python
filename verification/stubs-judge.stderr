@@ -1,0 +1,5 @@
+loop: test.0 exited 1: python3 -B scripts/judge.py state
+loop: test.1 exited 1: python3 -B scripts/judge.py withdraw
+loop: test.2 exited 1: "$(command -v timeout || command -v gtimeout)" 45 python3 -B scripts/judge.py schedule
+loop: test.3 exited 1: python3 -B scripts/judge.py driver && python3 -B vendor/shared/tools/replay.py --driver "python3 -B scripts/conformance_driver.py" && python3 -B vendor/shared/tools/check_driver.py --driver "python3 -B scripts/conformance_driver.py"
+loop: test.4 exited 1: python3 -B scripts/judge.py all && python3 -B vendor/shared/tools/replay.py --driver "python3 -B scripts/conformance_driver.py" && python3 -B vendor/shared/tools/check_driver.py --driver "python3 -B scripts/conformance_driver.py" && python3 -B scripts/package_check.py && bash scripts/test_loop.sh

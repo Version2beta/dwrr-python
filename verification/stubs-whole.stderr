@@ -1,0 +1,350 @@
+test_constructor_and_queue_defaults (tests.test_state.StateTests.test_constructor_and_queue_defaults) ... FAIL
+test_enqueue_atomic_first_invalid (tests.test_state.StateTests.test_enqueue_atomic_first_invalid) ... FAIL
+test_index_precedence (tests.test_state.StateTests.test_index_precedence) ... FAIL
+test_python_batch_domain (tests.test_state.StateTests.test_python_batch_domain) ... FAIL
+test_quantum_validation_preserves_visit (tests.test_state.StateTests.test_quantum_validation_preserves_visit) ... ERROR
+test_records_and_payloads (tests.test_state.StateTests.test_records_and_payloads) ... ERROR
+test_remove_queue_releases_payload (tests.test_state.StateTests.test_remove_queue_releases_payload) ... FAIL
+test_remove_queue_repairs_cursor_and_reuse (tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse) ... FAIL
+test_drain_queue_closes_only_matching_visit (tests.test_withdraw.WithdrawTests.test_drain_queue_closes_only_matching_visit) ... ERROR
+test_empty_drain_is_fresh_noop (tests.test_withdraw.WithdrawTests.test_empty_drain_is_fresh_noop) ... ok
+test_remove_head_preserves_credit_until_empty (tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty) ... ERROR
+test_withdraw_validation_atomic (tests.test_withdraw.WithdrawTests.test_withdraw_validation_atomic) ... ERROR
+test_take_example_exact_order (tests.test_schedule.ScheduleTests.test_take_example_exact_order) ... FAIL
+test_take_head_blocking_zero_huge_request (tests.test_schedule.ScheduleTests.test_take_head_blocking_zero_huge_request) ... FAIL
+test_take_independent_bounded_mixed_traces (tests.test_schedule.ScheduleTests.test_take_independent_bounded_mixed_traces) ... FAIL
+test_take_maximum_skip_and_tie_cursor (tests.test_schedule.ScheduleTests.test_take_maximum_skip_and_tie_cursor) ... FAIL
+test_take_payload_identity_no_effects_and_release (tests.test_schedule.ScheduleTests.test_take_payload_identity_no_effects_and_release) ... ERROR
+test_take_peak_credit_and_withdraw_exposed_head (tests.test_schedule.ScheduleTests.test_take_peak_credit_and_withdraw_exposed_head) ... FAIL
+test_take_resume_join_and_reweight (tests.test_schedule.ScheduleTests.test_take_resume_join_and_reweight) ... FAIL
+test_take_split_and_continuously_backlogged_fairness (tests.test_schedule.ScheduleTests.test_take_split_and_continuously_backlogged_fairness) ... FAIL
+test_take_validation_atomic (tests.test_schedule.ScheduleTests.test_take_validation_atomic) ... FAIL
+test_concurrent_batches_and_takes_conserve_fifo_without_interleaving (tests.test_concurrency.ConcurrencyTests.test_concurrent_batches_and_takes_conserve_fifo_without_interleaving) ... FAIL
+test_concurrent_take_returns_complete_serial_slices (tests.test_concurrency.ConcurrencyTests.test_concurrent_take_returns_complete_serial_slices) ... ok
+test_every_operation_lock_covers_entire_engine_call (tests.test_concurrency.ConcurrencyTests.test_every_operation_lock_covers_entire_engine_call) ... ok
+test_remove_queue_releases_payload_after_unlock (tests.test_concurrency.ConcurrencyTests.test_remove_queue_releases_payload_after_unlock) ... FAIL
+test_all_1839_cases_44728_steps_seven_files (tests.test_corpus.CorpusTests.test_all_1839_cases_44728_steps_seven_files) ... FAIL
+test_dispatch_every_operation_and_fresh_new (tests.test_driver.DriverTests.test_dispatch_every_operation_and_fresh_new) ... FAIL
+test_huge_json_integer_roundtrip_without_global_setting (tests.test_driver.DriverTests.test_huge_json_integer_roundtrip_without_global_setting) ... FAIL
+test_protocol_first_all_items_and_json_domain (tests.test_driver.DriverTests.test_protocol_first_all_items_and_json_domain) ... ok
+test_unused_fields_wire_uint64_and_errors_continue (tests.test_driver.DriverTests.test_unused_fields_wire_uint64_and_errors_continue) ... FAIL
+
+======================================================================
+ERROR: test_quantum_validation_preserves_visit (tests.test_state.StateTests.test_quantum_validation_preserves_visit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 99, in test_quantum_validation_preserves_visit
+    state.queues[0].credit = 9
+    ~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_records_and_payloads (tests.test_state.StateTests.test_records_and_payloads)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 37, in test_records_and_payloads
+    actual = s._engine.state.queues[0].items
+             ~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_drain_queue_closes_only_matching_visit (tests.test_withdraw.WithdrawTests.test_drain_queue_closes_only_matching_visit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_withdraw.py", line 34, in test_drain_queue_closes_only_matching_visit
+    s = self.prepared()
+  File "/Users/rob/Development/dwrr-python/tests/test_withdraw.py", line 13, in prepared
+    s._engine.state.queues[0].credit = 4
+    ~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_remove_head_preserves_credit_until_empty (tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_withdraw.py", line 17, in test_remove_head_preserves_credit_until_empty
+    s = self.prepared()
+  File "/Users/rob/Development/dwrr-python/tests/test_withdraw.py", line 13, in prepared
+    s._engine.state.queues[0].credit = 4
+    ~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_withdraw_validation_atomic (tests.test_withdraw.WithdrawTests.test_withdraw_validation_atomic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_withdraw.py", line 47, in test_withdraw_validation_atomic
+    s = self.prepared()
+  File "/Users/rob/Development/dwrr-python/tests/test_withdraw.py", line 13, in prepared
+    s._engine.state.queues[0].credit = 4
+    ~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_take_payload_identity_no_effects_and_release (tests.test_schedule.ScheduleTests.test_take_payload_identity_no_effects_and_release)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 95, in test_take_payload_identity_no_effects_and_release
+    self.assertIs(out[0].value, payload)
+                  ~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_constructor_and_queue_defaults (tests.test_state.StateTests.test_constructor_and_queue_defaults)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 16, in test_constructor_and_queue_defaults
+    self.assertEqual(len(s._engine.state.queues), count + 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_enqueue_atomic_first_invalid (tests.test_state.StateTests.test_enqueue_atomic_first_invalid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 48, in test_enqueue_atomic_first_invalid
+    with self.assertRaises(SchedulerError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: SchedulerError not raised
+
+======================================================================
+FAIL: test_index_precedence (tests.test_state.StateTests.test_index_precedence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 62, in test_index_precedence
+    with self.assertRaises(SchedulerError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: SchedulerError not raised
+
+======================================================================
+FAIL: test_python_batch_domain (tests.test_state.StateTests.test_python_batch_domain)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 79, in test_python_batch_domain
+    with self.assertRaises(TypeError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+AssertionError: TypeError not raised
+
+======================================================================
+FAIL: test_remove_queue_releases_payload (tests.test_state.StateTests.test_remove_queue_releases_payload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 147, in test_remove_queue_releases_payload
+    self.assertIsNotNone(ref(), 'enqueue must retain queued payloads')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : enqueue must retain queued payloads
+
+======================================================================
+FAIL: test_remove_queue_repairs_cursor_and_reuse (tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_state.py", line 126, in test_remove_queue_repairs_cursor_and_reuse
+    self.assertEqual(snapshot(s)[:2], (0, False))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (2, False) != (0, False)
+
+First differing element 0:
+2
+0
+
+- (2, False)
+?  ^
+
++ (0, False)
+?  ^
+
+
+======================================================================
+FAIL: test_take_example_exact_order (tests.test_schedule.ScheduleTests.test_take_example_exact_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 23, in test_take_example_exact_order
+    self.assertEqual(triples(s.take(10)), [(0, 'a', 2), (0, 'b', 2), (1, 'x', 4), (1, 'y', 1)])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != [(0, 'a', 2), (0, 'b', 2), (1, 'x', 4), (1, 'y', 1)]
+
+Second list contains 4 additional elements.
+First extra element 0:
+(0, 'a', 2)
+
+- []
++ [(0, 'a', 2), (0, 'b', 2), (1, 'x', 4), (1, 'y', 1)]
+
+======================================================================
+FAIL: test_take_head_blocking_zero_huge_request (tests.test_schedule.ScheduleTests.test_take_head_blocking_zero_huge_request)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 44, in test_take_head_blocking_zero_huge_request
+    self.assertEqual(triples(s.take(10**100)), [(1, 'other', 1), (0, 'head', 5), (0, 'cheap', 1)])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != [(1, 'other', 1), (0, 'head', 5), (0, 'cheap', 1)]
+
+Second list contains 3 additional elements.
+First extra element 0:
+(1, 'other', 1)
+
+- []
++ [(1, 'other', 1), (0, 'head', 5), (0, 'cheap', 1)]
+
+======================================================================
+FAIL: test_take_independent_bounded_mixed_traces (tests.test_schedule.ScheduleTests.test_take_independent_bounded_mixed_traces)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 131, in test_take_independent_bounded_mixed_traces
+    self.assertEqual(actual, want, (trace, step, op, args))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ('ok', None) != ('error', 'invalid_index')
+
+First differing element 0:
+'ok'
+'error'
+
+- ('ok', None)
++ ('error', 'invalid_index') : (0, 0, 'enqueue', (-1, [(0, 10), (1, 12), (2, 12)]))
+
+======================================================================
+FAIL: test_take_maximum_skip_and_tie_cursor (tests.test_schedule.ScheduleTests.test_take_maximum_skip_and_tie_cursor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 86, in test_take_maximum_skip_and_tie_cursor
+    self.assertEqual(triples(s.take(4)), [(1, 1, MAX_COST), (2, 2, MAX_COST), (0, 0, MAX_COST)])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != [(1, 1, 9223372036854775807), (2, 2, 92233[40 chars]807)]
+
+Second list contains 3 additional elements.
+First extra element 0:
+(1, 1, 9223372036854775807)
+
+- []
++ [(1, 1, 9223372036854775807),
++  (2, 2, 9223372036854775807),
++  (0, 0, 9223372036854775807)]
+
+======================================================================
+FAIL: test_take_peak_credit_and_withdraw_exposed_head (tests.test_schedule.ScheduleTests.test_take_peak_credit_and_withdraw_exposed_head)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 69, in test_take_peak_credit_and_withdraw_exposed_head
+    self.assertEqual(triples(s.take(1)), [(1, 'pause', 1)])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != [(1, 'pause', 1)]
+
+Second list contains 1 additional elements.
+First extra element 0:
+(1, 'pause', 1)
+
+- []
++ [(1, 'pause', 1)]
+
+======================================================================
+FAIL: test_take_resume_join_and_reweight (tests.test_schedule.ScheduleTests.test_take_resume_join_and_reweight)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 31, in test_take_resume_join_and_reweight
+    self.assertEqual(triples(s.take(1)), [(0, 1, 1)])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != [(0, 1, 1)]
+
+Second list contains 1 additional elements.
+First extra element 0:
+(0, 1, 1)
+
+- []
++ [(0, 1, 1)]
+
+======================================================================
+FAIL: test_take_split_and_continuously_backlogged_fairness (tests.test_schedule.ScheduleTests.test_take_split_and_continuously_backlogged_fairness)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 150, in test_take_split_and_continuously_backlogged_fairness
+    self.assertEqual([sum(i[0] == q for i in want) for q in range(3)], [50, 150, 350])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [0, 0, 0] != [50, 150, 350]
+
+First differing element 0:
+0
+50
+
+- [0, 0, 0]
++ [50, 150, 350]
+?  +   ++   ++
+
+
+======================================================================
+FAIL: test_take_validation_atomic (tests.test_schedule.ScheduleTests.test_take_validation_atomic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_schedule.py", line 56, in test_take_validation_atomic
+    with self.assertRaises(exception) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+AssertionError: TypeError not raised
+
+======================================================================
+FAIL: test_concurrent_batches_and_takes_conserve_fifo_without_interleaving (tests.test_concurrency.ConcurrencyTests.test_concurrent_batches_and_takes_conserve_fifo_without_interleaving)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_concurrency.py", line 96, in test_concurrent_batches_and_takes_conserve_fifo_without_interleaving
+    self.assertEqual(len(observed), 600)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 600
+
+======================================================================
+FAIL: test_remove_queue_releases_payload_after_unlock (tests.test_concurrency.ConcurrencyTests.test_remove_queue_releases_payload_after_unlock)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_concurrency.py", line 43, in test_remove_queue_releases_payload_after_unlock
+    self.assertEqual(result.returncode, 0, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<string>", line 25, in <module>
+    assert s.take(1)[0].value == 'first'
+           ~~~~~~~~~^^^
+IndexError: list index out of range
+
+
+======================================================================
+FAIL: test_all_1839_cases_44728_steps_seven_files (tests.test_corpus.CorpusTests.test_all_1839_cases_44728_steps_seven_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_corpus.py", line 44, in test_all_1839_cases_44728_steps_seven_files
+    self.assertEqual(actual, step['response'], (path.name, case['name'], position))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'ok': []} != {'ok': [{'queue': 0, 'value': 1, 'cost': '9223372[203 chars]1'}]}
+- {'ok': []}
++ {'ok': [{'cost': '9223372036854775807', 'queue': 0, 'value': 1},
++         {'cost': '1', 'queue': 1, 'value': 4},
++         {'cost': '9223372036854775807', 'queue': 0, 'value': 2},
++         {'cost': '9223372036854775807', 'queue': 1, 'value': 5},
++         {'cost': '1', 'queue': 0, 'value': 3}]} : ('boundaries.jsonl', 'boundary/max-cost-max-quantum', 5)
+
+======================================================================
+FAIL: test_dispatch_every_operation_and_fresh_new (tests.test_driver.DriverTests.test_dispatch_every_operation_and_fresh_new)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_driver.py", line 28, in test_dispatch_every_operation_and_fresh_new
+    self.assertEqual(p.returncode, 0, p.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : b'protocol error: request before new\n'
+
+======================================================================
+FAIL: test_huge_json_integer_roundtrip_without_global_setting (tests.test_driver.DriverTests.test_huge_json_integer_roundtrip_without_global_setting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_driver.py", line 42, in test_huge_json_integer_roundtrip_without_global_setting
+    self.assertEqual(p.returncode, 0, p.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : b'protocol error: request before new\n'
+
+======================================================================
+FAIL: test_unused_fields_wire_uint64_and_errors_continue (tests.test_driver.DriverTests.test_unused_fields_wire_uint64_and_errors_continue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rob/Development/dwrr-python/tests/test_driver.py", line 74, in test_unused_fields_wire_uint64_and_errors_continue
+    self.assertEqual(p.returncode, 0, p.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : b'protocol error: request before new\n'
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.740s
+
+FAILED (failures=20, errors=6)

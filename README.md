@@ -1,9 +1,9 @@
 # dwrr-python
 
-> **Design draft — awaiting author review.** This describes proposed finished-tool
-> behavior, not working software. The only product deliverables are this README
-> and [SPEC.md](SPEC.md); examples and commands are promises, not executed evidence. No Python
-> design decision is approved, and no implementation or readme-loop kit is authorized yet.
+> **Approved bounded spec-loop kit — STOP before coder loop.** Public behavior
+> below is the owner-approved target, not a delivered implementation. The checkout
+> contains deliberate implementation stubs. Private-reference checks establish kit
+> reachability only; they are not production Python conformance or release evidence.
 
 ## The need
 
@@ -15,37 +15,37 @@ measure execution time or run jobs.
 
 ## At a glance
 
-- Proposed import: `dwrr`; proposed distribution: `dwrr-python` (availability and
-  ownership not checked; no PyPI publication promised).
+- Import: `dwrr`; distribution: `dwrr-python` (owner confirms availability).
+  Publication requires complete owner sign-off; nothing is published by this kit.
 - Python >= 3.11; standard library only at runtime. Minimum/current CPython
-  compatibility must be demonstrated later, not inferred from these drafts.
+  compatibility is checked on the private reference, not yet on loop-written code.
 - A mutable, generic `Scheduler[T]` with explicit `Item[T]` inputs and
   `Scheduled[T]` outputs. No immutable scheduler snapshots or implicit server.
-- Caller-owned synchronization: use one owner, or serialize **all** calls with
-  the same external lock. No built-in thread safety or async API is promised.
+- Internal locking serializes **every complete operation**, including validation
+  and result creation. No async wrapper; the lock does not protect caller payload
+  mutations or concurrent edits to an input batch.
 - Target: language-neutral **dwrr-spec 0.1.1 (draft)**, all eight operations,
   all six errors, exact limits and service order. Conformance is unverified.
-- Proposed license: MIT, following the sibling projects; no license file or
-  release metadata has been prepared.
+- MIT license; no runtime dependencies. Local initial version `0.1.0`.
 
 ## Requirements and installation
 
-After an approved implementation and packaging stage, install from this checkout:
+After the loop is accepted and implemented, install from this checkout:
 
 ```sh
 python3 -m pip install .
 ```
 
-This is **not runnable in the current documentation-only directory**. No
-`pip install dwrr-python` command, package version, repository URL or publication
-claim is made. Build backend/dependencies and release metadata remain deferred
-until before the packaging kit; installing prerequisites requires permission.
-The core needs no Go, Elixir, credentials, configuration or network service.
+Do not install these stubs for real use. Setuptools builds an ordinary pure-Python
+wheel/sdist: a minimal conventional local build detail, not a new API promise.
+The dev/test driver and frozen verification kit are checkout-only, not installed
+CLI entry points. No repository URL or PyPI release claim is made. The core needs
+no Go, Elixir, credentials, configuration or network service.
 
 ## First useful example
 
 Queue 0 earns 2 credit per visit and queue 1 earns 3. Queue 1's head costs 4,
-so it must carry credit across visits before serving it. Proposed executable example:
+so it must carry credit across visits before serving it. Target executable example:
 
 ```python
 from dwrr import Item, Scheduler
@@ -60,18 +60,18 @@ served = scheduler.take(10)
 print([(item.queue, item.value, item.cost) for item in served])
 ```
 
-Expected output (not yet verified):
+Expected output (verified only with the private reference):
 
 ```text
 [(0, 'a', 2), (0, 'b', 2), (1, 'x', 4), (1, 'y', 1)]
 ```
 
-## Proposed public API
+## Public API
 
 `T` is the opaque payload type. `Item(value, cost)` and
 `Scheduled(queue, value, cost)` are frozen dataclass records with those public
 fields. They are shallowly immutable: the payload is retained and returned by
-reference, not copied, hashed, compared or executed by scheduling operations.
+reference, not copied, hashed, compared or explicitly executed by scheduling operations.
 Item construction does not validate costs; enqueue does, preserving batch error
 precedence. Costs cannot be changed after acceptance through the supported API.
 
@@ -93,7 +93,7 @@ identity is not promised; payload identity is.
 
 ### Withdrawal and recovery
 
-Proposed independent example, including a whole-batch rejection:
+Independent example, including a whole-batch rejection:
 
 ```python
 from dwrr import Item, Scheduler, SchedulerError
@@ -111,7 +111,7 @@ remaining = scheduler.drain_queue(0)
 print(removed.value, [item.value for item in remaining])
 ```
 
-Expected output (not yet verified):
+Expected output (verified only with the private reference):
 
 ```text
 zero_cost
@@ -170,10 +170,10 @@ numeric objects. Count must be nonnegative. Negative costs/quanta and negative
 count raise ordinary `ValueError`, not a new shared error code. Wrong argument
 or batch-element types raise `TypeError`. All documented validation failures
 preserve state. Precise validation order is in [SPEC §3](SPEC.md#3-validation-and-errors).
-These Python-domain rules are proposed additions where the language-neutral
+These Python-domain rules are approved additions where the language-neutral
 spec does not define an input. Arbitrary iterables/generators are not accepted
 as batches. Resource exhaustion, process termination, forged private state,
-bypassing record immutability and overlapping unsynchronized calls are outside
+bypassing record immutability and concurrent input-batch mutation are outside
 the atomicity guarantee; there is no crash-recovery promise.
 
 ## Effects, privacy and non-goals
@@ -183,12 +183,15 @@ network, subprocess, environment/configuration, logging, telemetry, model or
 credential access. It starts no thread, task or process. It retains payload
 references while queued; returned items belong to the caller. Removing/draining
 releases scheduler-owned references to removed payloads, but is not secure
-erasure and cannot free references held elsewhere. Caller mutation of a shared
+erasure and cannot free references held elsewhere. Normal Python reference release
+may run finalizers/weakref callbacks; discarded queues are retained until the
+operation lock is released and state is coherent. This does not promise safety
+for arbitrary GC, signal handlers or asynchronous same-thread callback reentry. Caller mutation of a shared
 payload is visible; the scheduler neither protects nor deep-copies it.
 
 Not included: job execution, worker pools, blocking dequeue, backpressure, queue
 capacity/admission policy, keyed queues, priority levels, deadlines, persistence,
-distributed fairness, async wrappers or a production CLI. The proposed dev/test
+distributed fairness, async wrappers or a production CLI. The dev/test
 conformance driver is the only stdio interface; it is not a general command tool.
 No configuration precedence, secrets management or `doctor` command is needed.
 
@@ -199,79 +202,97 @@ The shared corpus currently contains **1,839 cases / 44,728 steps in seven files
 the sibling working-tree protocol checker now has **41 checks** (36 at the historical
 pin). The expanded histories cover unused recognized fields and arbitrary-size
 integers, without changing the corpus. These are
-available checks, **not Python pass results**. Proposed acceptance includes all
+frozen verification targets, **not implemented-library pass results**. Acceptance includes all
 corpus files as native core calls, unchanged external replay, the protocol checker,
 focused Python-domain tests, an independent bounded naive oracle, and executable
-README examples. No tests, driver, kit or reference implementation exist here yet.
+README examples. The kit includes these checks; see [KIT-VERIFICATION.md](KIT-VERIFICATION.md) for
+failing-stub/passing-reference evidence and limitations.
 
 Compatibility is with shared draft 0.1.1, not every sibling feature:
 
 - Go v0.10.1 supplies the recorded corpus. The inspected Go working tree has
   **uncommitted, unreleased** callable quanta, whole-number float inputs,
   speculative scheduling and state-change errors. None is in shared 0.1.1 and
-  none is proposed for this Python stage. Quanta here are fixed integer values;
+  none is included in this Python stage. Quanta here are fixed integer values;
   applications may explicitly reweight between calls.
 - The shared Go adapter now supports published and current Take signatures,
   ignores unused recognized fields, and preserves arbitrary-size payload/index/n
-  integers. Its native-int constructor-count and 64 MiB line restrictions remain
-  unresolved adapter qualifications, not Python/Elixir protocol caps. Current Go's
+  integers, including count. Valid nonnegative counts above Go's native `int`
+  representation now fail as resources (stderr, exit 1, no response or later
+  processing; prior responses stand), not protocol errors. This permitted resource
+  failure adds no Python/Elixir integer cap or guaranteed allocation/OOM recovery.
+  Go's 64 MiB line restriction remains an adapter qualification. Current Go's
   generation exhaustion also restricts even fixed-only scheduling relative to the
   shared all-sequences contract. Bounded conformance passes do not erase this.
 - Elixir supplies useful pure-core/adapter/driver separation and exact idle-skip
-  reasoning. Python instead proposes mutable caller-owned state, not immutable
+  reasoning. Python uses mutable internally locked state, not immutable
   branching or the optional GenServer wrapper. Elixir approvals do not authorize
   Python decisions.
 
-## Decisions — author review gate
+## Owner decisions and release gate
 
-Every choice below is **proposed**, not approved. Please approve or amend the
-relevant entry inline before affected kit preparation; silence is not approval.
+The explicit owner approvals supplied for kit preparation supersede the historical
+unapproved draft and handoff. No approval is inferred from sibling work.
 
-| ID | Proposed decision and rationale | Status |
-| --- | --- | --- |
-| D1 | Target all of shared 0.1.1 core plus dev/test driver; exclude Go's unreleased adaptive extensions and Elixir Server. Keeps one exact, independently checkable contract. | Proposed — awaiting inline approval |
-| D2 | Mutable `Scheduler[T]`, frozen records, eight operations above, no internal locking; caller serializes access. Minimal conventional Python library rather than a process or persistent-value framework. | Proposed — awaiting inline approval |
-| D3 | One `SchedulerError(ValueError)` with six stable codes; strict built-in integers, local TypeError/ValueError for outside-domain inputs, list/tuple batches. Preserves shared precedence without inventing shared errors or generator side effects. | Proposed — awaiting inline approval |
-| D4 | Python >=3.11, import `dwrr`, local distribution `dwrr-python`, MIT, no runtime dependencies. Package ownership/publication, version, backend and CI matrix deferred until before packaging work. | Proposed — awaiting inline approval |
-| D5 | First bounded stage is the usable core, driver and verification described above; exact numeric skipping is required, sparse-queue optimization/performance targets deferred. Prove behavior before adding wrappers or tuning. | Proposed — awaiting inline approval |
+| ID | Approved decision |
+| --- | --- |
+| D1 | All shared fixed-quantum 0.1.1 operations plus dev/test driver; defer callbacks and float conveniences. |
+| D2 | Mutable `Scheduler[T]` with internal complete-operation locking; no async wrapper. |
+| D3 | Frozen shallow records, opaque payload refs; six `SchedulerError(ValueError)` codes; ordinary TypeError/ValueError outside domain; strict built-in ints, list/tuple batches. |
+| D4 | Python >=3.11, `dwrr`, `dwrr-python` (owner says available), MIT, no runtime dependencies. |
+| D5 | Full frozen conformance, independent bounded naive oracle, exact skip, examples and isolated/archive installs. |
 
-**Approved decisions:** none for this Python library. **Deferred:** packaging
-choices before its kit; any wrappers, adaptive policies or measured performance
-contracts before a later design gate. Private representation and helper choices
-remain implementation freedoms consistent with these promises; new public
-behavior or weakened checks require another author decision.
+Local packaging: setuptools pure-Python wheel/sdist, initial `0.1.0`; no optional
+runtime modules or speculative scaffolding. Publishing is in scope **only after
+complete owner sign-off**, never from this preparation or automatically in a task.
+Pushes and sibling changes are not authorized here. Hosted CI and performance
+claims are not part of this bounded kit.
 
-## readme-loop operation boundary (not product commands)
+## Kit use — STOP for parent review
 
-**Stopped at author review.** No kit has been prepared or verified. At initial
-draft review, no Git repo, branch, runner, tasks, tests, fixtures, stubs or private
-reference was created. No model call, dependency installation, commit, staging
-or discard was performed during that review.
-Only source inspection and documentation checks support this Python draft. A later
-authorized cross-language consistency pass corrected these documents and sibling
-adapter/docs/tests; it did not approve D1–D5 or authorize a Python kit.
+Prepared on `spec-loop/python-core-kit`, branched from the existing checkout.
+The pre-existing README/SPEC edits were integrated, not reset. Historically this
+project began as two draft documents without a Git repository; that is not its
+current state. Only `_engine.py` and `scripts/_adapter.py` are implementation
+files; `PROGRESS.md` is coder notes. All other kit files are protected (inventory
+and hashes in `kit-manifest.json`). Five useful tasks, whole tree last; no artificial
+15-task padding. The complete facade owns internal locking; engine operations
+must obey the protected private State seam, not expose it as public API.
 
-After actual inline design approval, obtain permission for the affected bounded
-kit preparation and its verification. Before using the unchanged skill runner,
-inspect its kit-format reference and script header, establish an authorized Git
-repository and non-main branch, preserve all owner work, verify failing stubs and
-passing private reference with the runner's judge, and return evidence for review.
-Exact apply/check/run commands, protected paths, logs under `.loop/`, and `STOP`
-handling must be added here with that kit; there is no safe run command yet.
+Prerequisites: Bash, Git, jq, timeout/gtimeout, Python >=3.11, Pi and authorized
+provider credentials. Before offline judge checks, prepare dev build tools:
 
-Runner prerequisites are Bash, Git, jq, `timeout`/`gtimeout`, Python/check tools,
-and an authorized Pi/provider setup. Do not install them without permission.
-The runner auto-commits passes and discards failed attempt-owned changes: both
-permissions, baseline commit authorization, model access/spending limits and
-exact model commands require explicit owner consent separately from design approval.
-The skill's pinned defaults, **shown for future confirmation only**, are:
-
-```text
-CHEAP_CMD: pi --provider anthropic --model claude-haiku-5-5 --thinking high --print --no-session
-STRONG_CMD: pi --provider openai-codex --model gpt-6.1-sol --thinking high --print --no-session
-STRONGEST_CMD: pi --provider openai-codex --model gpt-6.1-sol --thinking max --print --no-session
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install build 'setuptools>=77' wheel
+mkdir -p .loop/build-wheels
+.venv/bin/python -m pip download --only-binary=:all: --dest .loop/build-wheels 'setuptools>=77' wheel packaging
+bash scripts/loop.sh --check
 ```
 
-No command availability or provider access was checked, and none was run. Do not
-substitute models silently. Publication, remotes and tags would need separate
-permissions and are not part of this review stage.
+`--check` must fail on delivered stubs. It runs the unchanged runner judge (no
+formatter, no coder, no commits/discards). Judge commands never build in the source
+tree and permit incremental implementation: kit check checks protected bytes,
+syntax and forbidden effects, not unfinished later behavior. Standard-library
+unittest tests print exact per-test success lines on stdout; skips/no-tests cannot
+satisfy task expectations. Runner regression tests use fake coders in disposable
+repos, **not real models**: `bash scripts/test_loop.sh`.
+
+After parent acceptance ONLY, start from a clean, committed branch:
+
+```sh
+CHEAP_CMD='pi --provider anthropic --model claude-haiku-5-5 --thinking high --print --no-session' \
+STRONG_CMD='pi --provider openai-codex --model gpt-6.1-sol --thinking high --print --no-session' \
+STRONGEST_CMD='pi --provider openai-codex --model gpt-6.1-sol --thinking high --print --no-session' \
+bash scripts/loop.sh
+```
+
+Do not omit the STRONGEST override: the unchanged runner's historical default is
+`max`, but the owner approves **high**, not max. Do not substitute provider/model.
+Local auto-commits and discarding **only failed-attempt-owned** changes, dependency
+installation and model use are authorized; no real model call is authorized until
+parent accepts this kit. The runner records exact commands in `.loop/loop.log`
+and commit trailers; prompts/coder output/judge streams remain under `.loop/`.
+`STOP` names a task that exhausted attempts. Review logs and saved discarded notes;
+do not remove STOP or reset owner changes blindly. No push or publish command is
+part of the kit. Offline catalog/CLI inspection is not a live provider-access test.

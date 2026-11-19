@@ -1,0 +1,130 @@
+{
+  "format_check": "python3 -B scripts/kit_check.py",
+  "check": "python3 -B scripts/kit_check.py",
+  "protected": [
+    "^tests/",
+    "^vendor/",
+    "^verification/",
+    "^dwrr/(__init__|_contracts|_state)\\.py$",
+    "^scripts/(loop|test_loop)\\.sh$",
+    "^scripts/(wire|conformance_driver|judge|kit_check|package_check)\\.py$",
+    "^(README\\.md|SPEC\\.md|KIT-VERIFICATION\\.md|PROMPT\\.md|tasks\\.json|kit-manifest\\.json|pyproject\\.toml|MANIFEST\\.in|LICENSE|\\.gitignore)$"
+  ],
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Construct/validate state, atomic enqueue/reweight, add/remove queues",
+      "test": "python3 -B scripts/judge.py state",
+      "expect": [
+        "^PASS tests\\.test_state\\.StateTests\\.test_constructor_and_queue_defaults$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_records_and_payloads$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_enqueue_atomic_first_invalid$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_index_precedence$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_python_batch_domain$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_quantum_validation_preserves_visit$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_remove_queue_repairs_cursor_and_reuse$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_remove_queue_releases_payload$",
+        "^PASS group state: 8 tests, no skips$"
+      ],
+      "tier": "normal"
+    },
+    {
+      "id": "T2",
+      "title": "Implement FIFO head/drain withdrawal and visit closure",
+      "test": "python3 -B scripts/judge.py withdraw",
+      "expect": [
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_remove_head_preserves_credit_until_empty$",
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_drain_queue_closes_only_matching_visit$",
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_withdraw_validation_atomic$",
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_empty_drain_is_fresh_noop$",
+        "^PASS group withdraw: 4 tests, no skips$"
+      ],
+      "tier": "normal"
+    },
+    {
+      "id": "T3",
+      "title": "Implement exact resumable take and direct skip; full native corpus/oracle/concurrency",
+      "test": "\"$(command -v timeout || command -v gtimeout)\" 45 python3 -B scripts/judge.py schedule",
+      "expect": [
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_example_exact_order$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_resume_join_and_reweight$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_head_blocking_zero_huge_request$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_validation_atomic$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_peak_credit_and_withdraw_exposed_head$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_maximum_skip_and_tie_cursor$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_payload_identity_no_effects_and_release$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_independent_bounded_mixed_traces$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_split_and_continuously_backlogged_fairness$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_every_operation_lock_covers_entire_engine_call$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_concurrent_batches_and_takes_conserve_fifo_without_interleaving$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_concurrent_take_returns_complete_serial_slices$",
+        "^PASS tests\\.test_corpus\\.CorpusTests\\.test_all_1839_cases_44728_steps_seven_files$",
+        "^PASS group schedule: 14 tests, no skips$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_remove_queue_releases_payload_after_unlock$"
+      ],
+      "tier": "hard"
+    },
+    {
+      "id": "T4",
+      "title": "Implement public-core wire dispatch; external full replay and 41 protocol checks",
+      "test": "python3 -B scripts/judge.py driver && python3 -B vendor/shared/tools/replay.py --driver \"python3 -B scripts/conformance_driver.py\" && python3 -B vendor/shared/tools/check_driver.py --driver \"python3 -B scripts/conformance_driver.py\"",
+      "expect": [
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_dispatch_every_operation_and_fresh_new$",
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_huge_json_integer_roundtrip_without_global_setting$",
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_protocol_first_all_items_and_json_domain$",
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_unused_fields_wire_uint64_and_errors_continue$",
+        "^PASS group driver: 4 tests, no skips$",
+        "^PASS: 1839 cases, 44728 steps, 7 files$",
+        "^PASS: 41 of 41 checks passed$"
+      ],
+      "tier": "normal"
+    },
+    {
+      "id": "T5",
+      "title": "Whole tree: integrity/format, all tests, external protocol, archives/isolated README installs, runner regression",
+      "test": "python3 -B scripts/judge.py all && python3 -B vendor/shared/tools/replay.py --driver \"python3 -B scripts/conformance_driver.py\" && python3 -B vendor/shared/tools/check_driver.py --driver \"python3 -B scripts/conformance_driver.py\" && python3 -B scripts/package_check.py && bash scripts/test_loop.sh",
+      "expect": [
+        "^PASS tests\\.test_state\\.StateTests\\.test_constructor_and_queue_defaults$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_records_and_payloads$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_enqueue_atomic_first_invalid$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_index_precedence$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_python_batch_domain$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_quantum_validation_preserves_visit$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_remove_queue_repairs_cursor_and_reuse$",
+        "^PASS tests\\.test_state\\.StateTests\\.test_remove_queue_releases_payload$",
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_remove_head_preserves_credit_until_empty$",
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_drain_queue_closes_only_matching_visit$",
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_withdraw_validation_atomic$",
+        "^PASS tests\\.test_withdraw\\.WithdrawTests\\.test_empty_drain_is_fresh_noop$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_example_exact_order$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_resume_join_and_reweight$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_head_blocking_zero_huge_request$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_validation_atomic$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_peak_credit_and_withdraw_exposed_head$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_maximum_skip_and_tie_cursor$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_payload_identity_no_effects_and_release$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_independent_bounded_mixed_traces$",
+        "^PASS tests\\.test_schedule\\.ScheduleTests\\.test_take_split_and_continuously_backlogged_fairness$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_every_operation_lock_covers_entire_engine_call$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_concurrent_batches_and_takes_conserve_fifo_without_interleaving$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_concurrent_take_returns_complete_serial_slices$",
+        "^PASS tests\\.test_corpus\\.CorpusTests\\.test_all_1839_cases_44728_steps_seven_files$",
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_dispatch_every_operation_and_fresh_new$",
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_huge_json_integer_roundtrip_without_global_setting$",
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_protocol_first_all_items_and_json_domain$",
+        "^PASS tests\\.test_driver\\.DriverTests\\.test_unused_fields_wire_uint64_and_errors_continue$",
+        "^PASS group all: 30 tests, no skips$",
+        "^PASS: 1839 cases, 44728 steps, 7 files$",
+        "^PASS: 41 of 41 checks passed$",
+        "^PASS archives: pure Python wheel and sdist, MIT, no runtime dependencies$",
+        "^PASS isolated install and README examples: wheel$",
+        "^PASS isolated install and README examples: sdist$",
+        "^PASS isolated install and README examples: checkout$",
+        "^PASS package checks$",
+        "^All 26 real-loop cases passed; all 26 regressions caught. No model calls\\.$",
+        "^PASS tests\\.test_concurrency\\.ConcurrencyTests\\.test_remove_queue_releases_payload_after_unlock$"
+      ],
+      "tier": "normal"
+    }
+  ]
+}

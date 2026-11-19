@@ -1,19 +1,15 @@
 # dwrr-python supporting specification
 
-**Status: proposed design-review draft; no Python owner approval or kit exists.**
-This is subordinate to the root [README.md](README.md), specifically “Proposed
-public API”, “Behavior worth knowing”, “Failures and recovery”, “Effects, privacy
-and non-goals”, “Compatibility and verification target”, and decisions D1–D5.
-It clarifies those promises; it cannot expand or override them. A contradiction
-blocks affected preparation until the author resolves it in the README. Nothing
-below authorizes tests, fixtures, implementation, model calls or Git operations.
+**Status: owner-approved bounded implementation contract; kit contains stubs.**
+Subordinate to [README.md](README.md). Explicit owner approvals for this preparation
+supersede historical unapproved prose. Private-reference results verify the kit,
+not the not-yet-written product. No real coder loop before parent acceptance.
 
 ## 1. Scope and authority
 
-Proposed first usable stage: Python core, typed records, six-code exception,
+Approved first usable stage: Python core, typed records, six-code exception,
 exact direct idle-round calculation, and dev/test conformance driver, with the
-checks mapped in §7. All eight shared operations are included. Only README.md
-and this file are delivered at this review gate.
+checks mapped in §7. All eight shared operations are included. The protected kit and intentional stubs implement the preparation gate only.
 
 The behavioral reference is `../dwrr-spec/SPEC.md` **0.1.1 (draft)**, §§2–8;
 the wire reference is its `PROTOCOL.md` **0.1.1 (draft)**. Read the current checked
@@ -32,7 +28,7 @@ accepts arbitrary Python objects.
 
 ## 2. Public data and ownership
 
-Proposed exports from `dwrr`:
+Exports from `dwrr`:
 
 - `MAX_COST = MAX_QUANTUM = 9_223_372_036_854_775_807`.
 - `Item[T]`: frozen generic dataclass with positional/keyword fields
@@ -52,7 +48,7 @@ Python reflection. Callers must not forge state or bypass frozen fields.
 
 Store payload references without invoking payload equality, hashing, conversion,
 copying or callability. Returned `.value is original_value` must hold, including
-for `None`, mutable objects and callables. Scheduling never executes a payload.
+for `None`, mutable objects and callables. Scheduling never explicitly executes a payload.
 Payload mutations remain caller-owned; they cannot change accepted item costs.
 `None` from remove-head means no item, distinguishable from `Item(None, cost)`.
 
@@ -60,12 +56,21 @@ Returned lists are fresh containers, not queue storage. Item/record identity is
 unspecified. Scheduler copying, equality, pickling, subclass customization,
 public internal fields, snapshots and state introspection are not supported APIs.
 Dropping items must drop scheduler-owned payload references; caller-held outputs
-or payload references may keep them alive. There is no secure-erasure guarantee.
+or payload references may keep them alive. There is no secure-erasure guarantee. Normal Python reference release may run
+finalizers or weakref callbacks. Discarded queue storage is retained across the
+locked mutation and released only after unlock, with coherent state. This is not
+a universal guarantee for arbitrary GC, signals or asynchronous callback reentry.
 
-One owner executes calls sequentially. If shared, the caller locks **every**
-operation for its entire duration with the same external lock; no built-in lock,
-GIL-based safety or linearizability for unsynchronized overlap is promised.
-Successful mutators update the same scheduler; they never return a replacement.
+Every operation is serialized with an internal lock for its entire duration,
+including validation, selection and result construction. Concurrent public calls
+are equivalent to some serial ordering of complete operations. A blocked caller
+may wait for the lock; “nonblocking” only means no wait for producers. Locking
+protects scheduler state, not payloads or concurrent input-batch mutation. No
+async wrapper, callback execution, GIL assumption or external-lock requirement.
+Private Engine.remove_queue returns retired Queue storage (or None); the complete
+facade releases it after unlocking and still returns public None. Head/drain/take
+transfer payload references into their returned results; enqueue retains batch
+arguments through lock exit. Successful mutators update the same scheduler; no replacement scheduler is returned.
 
 ## 3. Validation and errors
 
@@ -87,7 +92,7 @@ negative indexing is **not** Python's from-the-end shorthand here. Cost/quantum
 code, even above `2**64-1` through the core API. Every 1..MAX value is valid.
 Negative take limits use `negative_take`, including with zero queues.
 
-### Proposed Python-domain rules
+### Python-domain rules
 
 These settle inputs outside the language-neutral nonnegative-cost domain, not
 new shared codes. They follow the strict-integer distinction used by the shared
@@ -233,7 +238,7 @@ of grants or results; no observable scheduler history is part of the API.
 
 ## 6. Dev/test conformance driver
 
-Proposed repository-only entry point, not a published CLI API:
+Repository-only entry point, not a published CLI API:
 `python3 scripts/conformance_driver.py`, run from this project after authorized
 local installation. Driver owns one scheduler and stdin/stdout. It imports and
 uses the public Python core; it must not substitute `tools/spec_model.py`, invoke
@@ -256,8 +261,9 @@ The complete pinned PROTOCOL.md applies, including:
 - Required integer fields: count, queue, n and every item value; count>=0.
   The corpus uses signed 32-bit integers, but the protocol does not prescribe that
   as a rejection bound. Do not silently add a wire magnitude or line-size cap.
-  Interpreter parsing/serialization limits must be addressed before the driver
-  kit is finalized; resource exhaustion is not a scheduler error (§9).
+  The protected codec uses <=500-digit integer conversions for parsing and
+  serialization, leaving interpreter-global settings unchanged. Resource
+  exhaustion is not a scheduler error (§9); no line or wire integer cap is added.
 - Costs/quanta are canonical decimal **strings**, full grammar `0|[1-9][0-9]*`,
   range 0..18_446_744_073_709_551_615 (`2**64-1`). No signs, spaces, leading zeroes,
   Unicode-digit substitutions or decimal points. In-range zero and values above
@@ -284,11 +290,14 @@ Empty collection is [], not null. Responses compare as parsed JSON with exact
 values; key order/whitespace are irrelevant, number/string distinction is not.
 The core never performs JSON conversion; the adapter handles wire shape and codes.
 
-## 7. Promise-to-check mapping (intended, not prepared)
+## 7. Promise-to-check mapping
 
-No test below exists or has run in this directory. These are approval-stage
-acceptance targets, not a tasks.json, kit manifest, judge expectations or pass
-report. Source-named tests should identify the relevant operation and failure.
+The protected standard-library tests and tasks implement the mapping below.
+`tests/test_state.py` covers T1; `test_withdraw.py` T2; `test_schedule.py`,
+`test_concurrency.py`, `test_corpus.py` T3; `test_driver.py` plus unchanged
+external tools T4; packaging/examples and whole tree T5. `tests/naive.py` is an
+independent bounded literal oracle; it never imports production scheduling logic.
+Per-test full-line stdout expectations and fixed counts reject empty/skip runs.
 
 | README promise / shared source | Intended checks |
 | --- | --- |
@@ -304,16 +313,17 @@ report. Source-named tests should identify the relevant operation and failure.
 | All shared operations | All seven corpus files replayed natively through public methods, asserting nonzero exact case/step counts; no external model invoked in that executor |
 | General behavioral confidence | Independent bounded naive step-by-step oracle over small mixed valid/invalid traces; FIFO/conservation/invariants, deterministic replay and split-take equivalence; bounded fixed-quantum continuously-backlogged fairness only |
 | Wire contract | Unchanged replay plus check_driver; additional malformed UTF-8, bool/exponent fields, all-item protocol-first validation, wire upper bounds, no-payload diagnostics, fresh new and scheduler-error continuation |
-| Useful package | After packaging decisions, install in isolated environment and run public examples without sibling/runtime dependencies; verify selected minimum/current Python runtimes |
+| Useful package | Install in isolated environment and run public examples without sibling/runtime dependencies; verify selected minimum/current Python runtimes |
 
 The naive oracle must not share production scheduling/skip helpers or import
 upstream's optimized model as the implementation. Keep its trace magnitudes and
 step count bounded; use analytic/corpus fixtures rather than stepping `2**63`
-rounds. No third-party property-testing dependency is proposed. A review of the
+rounds. No third-party property-testing dependency is used. A review of the
 skip proof and mutation sensitivity (in a separately authorized disposable copy)
 should complement output checks; never mutate siblings or expected corpus data.
-Private invariant checks may inspect an agreed test seam when preparing a kit;
-that seam must not become a new public API accidentally.
+Protected `dwrr/_state.py` is the private invariant seam; engine `.state` is
+not a supported public API. Complete `dwrr/__init__.py` owns the lock and delegates
+through the replaceable private `_engine` seam for deterministic concurrency tests.
 
 Available upstream corpus, counted from the inspected JSONL files:
 
@@ -336,11 +346,11 @@ cross-checks its executable model; four huge boundary cases omit the infeasible
 step-by-step model run. Seeds: 20261112, 20261113, 20261114 respectively for the
 three random files. This is corpus provenance, not Python validation.
 
-For a later implemented driver, intended external checks from this root are:
+External checks from this checkout use frozen byte-identical upstream tools:
 
 ```sh
-python3 ../dwrr-spec/tools/replay.py --driver 'python3 scripts/conformance_driver.py'
-python3 ../dwrr-spec/tools/check_driver.py --driver 'python3 scripts/conformance_driver.py'
+python3 vendor/shared/tools/replay.py --driver 'python3 scripts/conformance_driver.py'
+python3 vendor/shared/tools/check_driver.py --driver 'python3 scripts/conformance_driver.py'
 ```
 
 The historical upstream tools at the commit below have these summaries:
@@ -348,9 +358,8 @@ The historical upstream tools at the commit below have these summaries:
 `PASS: 36 of 36 checks passed`. The intentionally corrected working-tree
 checker now expects `PASS: 41 of 41 checks passed`; its source hash is recorded
 below, separately from that historical commit. All prior checks and corpus bytes
-remain. Neither command was run against Python here.
-If fixtures are later copied, preserve source bytes, hashes, provenance and MIT
-license; copying/preparing them is not authorized by this draft. Upstream's live
+remain. Current results are recorded in KIT-VERIFICATION.md for the private reference
+only. Frozen fixtures preserve source bytes, hashes, provenance and MIT license. Upstream's live
 generating/fuzzing/shrinking harness is planned, not available evidence.
 
 ## 8. Source provenance and ambiguity resolution
@@ -359,7 +368,7 @@ Historical inspection commits, with current correction overlays identified below
 
 | Source | Exact revision / status | Use |
 | --- | --- | --- |
-| `../dwrr-spec` | `8a0e3cf9ae860ba207213590c00feeb822bdd8f2`; now dirty with intentional consistency corrections | Normative behavior/protocol 0.1.1 draft; corpus and tools |
+| `../dwrr-spec` | `8a0e3cf9ae860ba207213590c00feeb822bdd8f2`; dirty with intentional corrections at historical pass | Normative behavior/protocol 0.1.1 draft; corpus and tools |
 | `../dwrr` | HEAD `492dc7e3e54f430212f483a728957ff7f151b4a5`; dirty tracked/untracked working tree | Informative APIs, ownership, current unreleased extensions; **not** an immutable source pin for inspected working-tree bytes |
 | Go v0.10.1 tag | `7109d4d4da265258f348598a378545656db0c241` | Corpus's recorded reference release, not current Go working tree |
 | `../dwrr-elixir` | `07729f3da8149826bc5ab3561ce2ef601dd9bd12`; clean at initial inspection | README, SPEC, docs/SPEC-DRAFT.md, core/data/driver separation and design tradeoffs |
@@ -372,16 +381,18 @@ commit bytes. Provenance above intentionally retains the inspected snapshot,
 not a claim that another project's branch is stationary. A runtime-owned `.wtha/`
 also appeared here; it was not authored, changed or removed by this task.
 
-Current authoritative SHA-256 of selected inspected files. The shared SPEC and
+Historical correction-pass SHA-256 of selected inspected files (see current
+committed-source table below). The shared SPEC and
 PROTOCOL and Go README hashes below supersede the initial inspection hashes
-because of intentional consistency wording/mapping/qualification corrections.
+because of intentional consistency wording/mapping/qualification corrections,
+including the approved queue-count representation resource policy.
 Shared version remains draft 0.1.1; no corpus/tag identity is changed:
 
 ```text
 dwrr-spec/SPEC.md
-  0096790e040a63f65dcb89f54a8b0d944b309da262caefc76e0217bc415c06cf
+  8b1009a335035e8cacc8e8e16d51800a480e21e0357588b379575d6448667c09
 dwrr-spec/PROTOCOL.md
-  c52a562c46b6d15054b166ada7eaa83e5d3609179c9f8f6415917dbaae40beac
+  db7cdbe2a8c1b03be7a89ec566d2c1fd800bcfe4d002c9ad45df1021e740d9c7
 dwrr/dwrr.go
   827c9b158fdc57acf7b9f67350f2cc37ade10dabc6b7edaadde801f2287791cb
 dwrr/README.md
@@ -389,7 +400,7 @@ dwrr/README.md
 ```
 
 The historical Elixir comparison above predates this correction pass. Elixir
-HEAD is still `4e170fc9036056e5e296972c785934238a8906a3`, now with intentional
+HEAD at that pass was `4e170fc9036056e5e296972c785934238a8906a3`, now with intentional
 documentation edits. Its vendored shared documents, corpus and provenance/hash
 guards retain the original immutable `8a0e3cf` snapshot; do not relabel them as
 these uncommitted shared corrections. No scheduler semantics/corpus changed.
@@ -399,11 +410,11 @@ Additional current overlay hashes (not immutable commit pins):
 dwrr-spec/tools/check_driver.py
   ccbaa88298d9e3418b50433ae90d435876bc825af799bdc55f9888c92e9f7775
 dwrr-spec/drivers/go/main.go
-  d8ef31b1885b02be2f39ff87b82543486516b6236a7f862e7e871bfb6c02d5e4
+  b277de83f2363c79efef88c9faa204ad38ebce862ae912acf90e6bf11689818a
 dwrr-spec/drivers/go/README.md
-  cfa93b014b3301e9ed7c3ce16c8f6f53cf324154a1125bad407eda29ddb8c7b7
+  14b134389a3769393841e8e19197e137aed2e017b08c177a9de6f941ffae25cf
 dwrr-elixir/README.md
-  736c88c1e1df9151e9becda03bc68b2f0e827b046ce0aa7d633ed3511b462260
+  fa48732587ed1e811f2054c8cb210b70eaed7184ce39ad39e34f753665c1be55
 dwrr-elixir/SPEC.md
   02900fa1fb24c93020f62189183c38c37c1f4986dbf1d45815c67d701095ab2f
 dwrr-elixir/docs/SPEC-DRAFT.md
@@ -415,9 +426,14 @@ dwrr-elixir/TESTING.md
 The Go adapter corrections ignore unused recognized malformed fields and preserve
 arbitrary-size integer payloads/indexes/take limits; take is reduced only to the
 actual backlog, which is behavior-equivalent. Both pinned v0.10.1 and current Go
-Take APIs are supported without upgrading the module pin. Native-int constructor
-count decoding and a pre-existing 64 MiB line ceiling remain Go adapter restrictions
-pending an owner policy decision, not changes to this proposed Python domain.
+Take APIs are supported without upgrading the module pin. Constructor count now
+uses strict arbitrary-precision JSON-integer parsing. A valid nonnegative count
+above Go's native `int` representation terminates before narrowing/allocation as
+resource exhaustion (stderr, exit 1, no response or later requests; prior responses
+stand), not malformed input (exit 2). The shared protocol permits this resource
+failure, not a common integer cap or shared scheduler error. Controlled recovery
+from actual allocation limits/OOM is not guaranteed. Go's pre-existing 64 MiB line
+ceiling remains an adapter restriction, not a change to this Python domain.
 Current Go's 2^64−1 mutation-generation budget also qualifies its fixed-core
 all-sequences conformance; no such lifetime cap is added here or in Elixir.
 Fresh sibling conformance results are not Python results or D1–D5 approvals.
@@ -431,11 +447,11 @@ Resolved distinctions:
 
 - Shared SPEC explicitly permits language-idiomatic names/errors and caller
   coordination. Go's mutex and Elixir's immutability are not core conformance
-  requirements. Proposed Python mutability/no lock is a design choice, not a
+  requirements. Historical proposed Python mutability/no lock was a design choice, not a
   conclusion that either sibling behaves that way.
 - Shared input domain does not assign negative costs/quanta or Python bools a
   shared code. Elixir rejects negatives outside its tagged error domain; Python
-  proposes ordinary ValueError/TypeError. No negative is mislabeled zero.
+  uses ordinary ValueError/TypeError. No negative is mislabeled zero.
 - Protocol 0.1.1 settles blank lines, negative count and whole-request parsing as
   protocol errors before scheduler validation. Go extensions do not change it.
 - The inspected Go README explicitly describes unreleased working-tree behavior;
@@ -444,51 +460,57 @@ Resolved distinctions:
 - Elixir design records both implemented core contracts and later-stage Server
   decisions; neither their approvals nor their test-pass claims transfer here.
 
-No conflicting shared-core rule remains unresolved after inspection. Material
-Python product choices remain proposals D1–D5, especially extension scope and
-state/concurrency ownership. The consistency pass changed sibling adapter/docs/tests
-under separate authorization, but no Python approval or implementation status.
+No conflicting shared-core rule remains unresolved after inspection. The owner's
+explicit approvals now settle D1–D5, including **internal locking** in place of the
+old caller-serialized draft. Sibling approvals still do not transfer automatically.
 
-## 9. Limitations, deferred choices and next gate
+### Current source qualification at kit preparation
 
-**Approved decisions/stage:** none for Python; this directory remains documentation-only.
-Cross-language consistency repairs do not approve a Python implementation stage.
-No implementation feasibility, runtime minimum,
-packaging, conformance pass, race safety, benchmark, hosted CI or real application
-use has been demonstrated. Corpus counts/hashes and source inspection are the
-only technical evidence supplied now.
+Read-only observations supersede stale “currently dirty” narration above, which
+is retained as historical inspection provenance rather than erased:
 
-**Before affected kit preparation:** obtain actual inline approval of README
-D1–D5 and any revisions. If the author instead needs adaptive callbacks or
-built-in synchronization, revise both contracts before preparing that work;
-no coder may select that scope. Before a driver kit, resolve exact handling of
-Python >=3.11 integer-string conversion limits without weakening protocol or
-changing application-global interpreter settings. This is an implementation
-feasibility question: first use a small authorized local parser/serializer
-experiment with long integer tokens; return for a decision if a cap/new promise
-is needed. No experiment or scaffolding has been made now.
+| Source | Observed committed HEAD | Current qualification |
+| --- | --- | --- |
+| dwrr-spec | `243dd125470365df2c52a6ce72de3ee8ecfce3fe` | Clean; frozen shared SPEC/PROTOCOL/tools copied from these bytes. Checker has 41 checks. |
+| dwrr (Go) | `04059ba2f6b83dd6e8395fd4540f0a21c519fbf5` | Clean; informative only; not the corpus recording release. |
+| dwrr-elixir | `388a3b7711379e037ac58522307b3b49a38135c1` | Other session's working edits observed; not touched or relied on as new normative bytes. |
+| dwrr-python base | `9fddbb36f6faeeae8a4f5c45227863e1808dbf00` | Existing repo; owner README/SPEC edits integrated on preparation branch. |
 
-**Deferred until before packaging kit:** version, owner-controlled distribution/
-repository identity, build backend/build dependencies, metadata, selected runtime
-CI matrix and release procedure. The local install promise needs those choices
-and isolated install evidence; no publishing action is implied. No runtime
-dependencies are proposed. Additional dependency installation needs permission.
+`vendor/shared/PROVENANCE.md` identifies copied sources and `kit-manifest.json`
+hashes every protected artifact. Corpus historical Go v0.10.1/tag/seeds and
+`8a0e3cf` origin remain unchanged; copying current protocol/tools does not
+relabel corpus provenance. Corrections are committed upstream, not dirty overlays
+at this preparation. No sibling checkout is changed by this kit.
 
-**Independent future scope:** wrappers, adaptive quantum policy, keyed queues,
-performance thresholds and sparse indexing need a new author gate; they are
-not hidden tasks in the core stage. Private helpers/data structures/test layout
-remain local freedoms within the approved observable contract.
+## 9. Boundaries and acceptance gate
 
-**After approval, not now:** read the skill's kit-format reference, prepare only
-an authorized bounded kit with protected contracts/fixtures/checks, verify failing
-stubs and passing private reference using the unchanged runner judge and hand
-interface examples, then return for review. Protect every approved README and
-this subordinate SPEC. Do not fabricate passing evidence or run implementation
-models merely because design is approved.
+Python >=3.11; `dwrr-python` 0.1.0 using ordinary setuptools pure-Python packaging
+is a local build choice. Runtime dependencies: none. Build/dev dependencies are
+not runtime dependencies. Package tests build in temporary directories, inspect
+wheel/sdist metadata and contents, and install wheel/sdist/checkout in isolated
+venvs outside the checkout with README examples. No publication until complete
+owner sign-off, no push, no automatic release task. Hosted CI and real consumer
+usage remain unverified. See KIT-VERIFICATION.md for observed runtime versions.
 
-At initial draft review, this directory was not a Git repository. Git initialization,
-branch and baseline commits require separate authorization. Launching the unchanged runner additionally
-requires both automatic commit and failed-attempt-owned-discard permission,
-explicit model/provider access and spending authorization, confirmation of the
-exact commands in the README, prerequisite availability, and a reviewed verified
-kit. No such permission has been inferred. Stop here for author review.
+The protected parser/serializer locally chunks decimal conversion; a 6000-digit
+positive/negative experiment verified exact roundtrip without changing
+`sys.get_int_max_str_digits()`. Decimal strings for cost/quantum retain the wire
+uint64 bound, distinct from arbitrary-size integer payload/index/n/count fields.
+Resource exhaustion and process termination are not domain failures or rollback
+promises; detected driver MemoryError/OverflowError exits 1 with a resource-only
+diagnostic and no response for the failed line or later processing. No actual
+huge allocation/OOM recovery is promised or attempted.
+
+Only `dwrr/_engine.py` and `scripts/_adapter.py` are implementation files;
+PROGRESS.md may receive coder notes. Every other tracked kit path is protected,
+including contracts, parser, locking facade, State seam, tests, frozen tools/corpus,
+packaging and runner. The guard allows syntax-valid unfinished later stubs during
+incremental tasks. No fixture-specific shortcuts, fallback model imports, shared
+oracle helpers, test rewriting, global interpreter-setting changes or external
+core effects are allowed. Source review remains mandatory: finite checks cannot
+prove all-sequence parity or eliminate adversarial implementations.
+
+Private reference is outside repo/coder kit, authored solely to prove reachability;
+it is never imported as a fallback. Verification temporarily swaps only the two
+owned stub files and restores them afterward. No coder/model call is made at
+preparation. Parent acceptance is required before the exact README loop command.

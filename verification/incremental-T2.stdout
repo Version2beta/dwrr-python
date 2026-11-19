@@ -1,0 +1,5 @@
+pass  T1  Construct/validate state, atomic enqueue/reweight, add/remove queues
+pass  T2  Implement FIFO head/drain withdrawal and visit closure
+FAIL  T3  Implement exact resumable take and direct skip; full native corpus/oracle/concurrency
+FAIL  T4  Implement public-core wire dispatch; external full replay and 41 protocol checks
+FAIL  T5  Whole tree: integrity/format, all tests, external protocol, archives/isolated README installs, runner regression

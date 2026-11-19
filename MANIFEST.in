@@ -1,0 +1,5 @@
+include LICENSE README.md SPEC.md pyproject.toml
+recursive-include dwrr *.py
+prune tests
+prune scripts
+prune vendor

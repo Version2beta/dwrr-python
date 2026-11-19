@@ -1,0 +1,133 @@
+PASS tests.test_state.StateTests.test_constructor_and_queue_defaults
+PASS tests.test_state.StateTests.test_enqueue_atomic_first_invalid
+PASS tests.test_state.StateTests.test_index_precedence
+PASS tests.test_state.StateTests.test_python_batch_domain
+PASS tests.test_state.StateTests.test_quantum_validation_preserves_visit
+PASS tests.test_state.StateTests.test_records_and_payloads
+PASS tests.test_state.StateTests.test_remove_queue_releases_payload
+PASS tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse
+PASS tests.test_withdraw.WithdrawTests.test_drain_queue_closes_only_matching_visit
+PASS tests.test_withdraw.WithdrawTests.test_empty_drain_is_fresh_noop
+PASS tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty
+PASS tests.test_withdraw.WithdrawTests.test_withdraw_validation_atomic
+PASS tests.test_schedule.ScheduleTests.test_take_example_exact_order
+PASS tests.test_schedule.ScheduleTests.test_take_head_blocking_zero_huge_request
+PASS tests.test_schedule.ScheduleTests.test_take_independent_bounded_mixed_traces
+PASS tests.test_schedule.ScheduleTests.test_take_maximum_skip_and_tie_cursor
+PASS tests.test_schedule.ScheduleTests.test_take_payload_identity_no_effects_and_release
+PASS tests.test_schedule.ScheduleTests.test_take_peak_credit_and_withdraw_exposed_head
+PASS tests.test_schedule.ScheduleTests.test_take_resume_join_and_reweight
+PASS tests.test_schedule.ScheduleTests.test_take_split_and_continuously_backlogged_fairness
+PASS tests.test_schedule.ScheduleTests.test_take_validation_atomic
+PASS tests.test_concurrency.ConcurrencyTests.test_concurrent_batches_and_takes_conserve_fifo_without_interleaving
+PASS tests.test_concurrency.ConcurrencyTests.test_concurrent_take_returns_complete_serial_slices
+PASS tests.test_concurrency.ConcurrencyTests.test_every_operation_lock_covers_entire_engine_call
+PASS tests.test_concurrency.ConcurrencyTests.test_remove_queue_releases_payload_after_unlock
+PASS tests.test_corpus.CorpusTests.test_all_1839_cases_44728_steps_seven_files
+PASS tests.test_driver.DriverTests.test_dispatch_every_operation_and_fresh_new
+PASS tests.test_driver.DriverTests.test_huge_json_integer_roundtrip_without_global_setting
+PASS tests.test_driver.DriverTests.test_protocol_first_all_items_and_json_domain
+PASS tests.test_driver.DriverTests.test_unused_fields_wire_uint64_and_errors_continue
+PASS group all: 30 tests, no skips
+PASS: 1839 cases, 44728 steps, 7 files
+ok    interactive requests, flushing and exit status 0 at end of input
+ok    protocol error: request before the first new
+ok    protocol error: blank line
+ok    protocol error: whitespace-only line
+ok    protocol error: not JSON
+ok    protocol error: JSON array
+ok    protocol error: JSON string
+ok    protocol error: missing op
+ok    protocol error: unknown op
+ok    protocol error: new without count
+ok    protocol error: new with negative count
+ok    protocol error: new with fractional count
+ok    protocol error: enqueue without items
+ok    protocol error: enqueue without queue
+ok    protocol error: enqueue items not a list
+ok    protocol error: enqueue item not an object
+ok    protocol error: item without value
+ok    protocol error: item without cost
+ok    protocol error: fractional value
+ok    protocol error: cost as a number
+ok    protocol error: cost with a leading zero
+ok    protocol error: cost with a sign
+ok    protocol error: cost with a space
+ok    protocol error: cost with a decimal point
+ok    protocol error: empty cost
+ok    protocol error: cost above 2^64-1
+ok    protocol error: queue as a string
+ok    protocol error: malformed cost on an invalid queue (protocol check comes first)
+ok    protocol error: set_quantum without quantum
+ok    protocol error: quantum with leading zeros
+ok    protocol error: malformed quantum on an invalid queue
+ok    protocol error: take without n
+ok    protocol error: n as a string
+ok    protocol error: n as a boolean
+ok    protocol error: remove_head without queue
+ok    protocol error: drain_queue with null queue
+ok    protocol error: malformed later cost after scheduler-invalid first item
+ok    protocol error: malformed cost with huge invalid queue
+ok    protocol error: malformed quantum with huge invalid queue
+ok    protocol error: exponent n
+ok    protocol error: boolean value
+
+PASS: 41 of 41 checks passed
+PASS archives: pure Python wheel and sdist, MIT, no runtime dependencies
+PASS isolated install and README examples: wheel
+PASS isolated install and README examples: sdist
+PASS isolated install and README examples: checkout
+PASS package checks
+PASS  search-count
+CAUGHT old-behavior regression: search-count — ASSERTION FAILED: search runs each task exactly once in order: got [0
+PASS  notes
+CAUGHT old-behavior regression: notes — ASSERTION FAILED: /dev/fd/63 lacks [remember failed approach]
+PASS  notes-cross-task
+CAUGHT old-behavior regression: notes-cross-task — ASSERTION FAILED: /dev/fd/63 lacks [remember failed approach]
+PASS  judge-writes
+CAUGHT old-behavior regression: judge-writes — ASSERTION FAILED: writing check fails attempt: got [0], expected [2]
+PASS  formatter-protected
+CAUGHT old-behavior regression: formatter-protected — ASSERTION FAILED: formatter cannot commit protected edit: got [formatter-edit], expected [fixture spec]
+PASS  good
+CAUGHT old-behavior regression: good — ASSERTION FAILED: /dev/fd/63 lacks [Coder-Command: bash fake.sh cheap]
+PASS  formatted
+CAUGHT old-behavior regression: formatted — ASSERTION FAILED: formatter fixes before judging: got [2], expected [0]
+PASS  protected
+CAUGHT old-behavior regression: protected — ASSERTION FAILED: protected edit cannot make task pass: got [0], expected [2]
+PASS  substring
+CAUGHT old-behavior regression: substring — ASSERTION FAILED: substring spoof rejected: got [0], expected [2]
+PASS  stderr
+CAUGHT old-behavior regression: stderr — ASSERTION FAILED: stderr spoof rejected: got [0], expected [2]
+PASS  nonzero
+CAUGHT old-behavior regression: nonzero — ASSERTION FAILED: nonzero spoof rejected: got [0], expected [2]
+PASS  hang
+CAUGHT old-behavior regression: hang — ASSERTION FAILED: hanging test counted as failure, not outer timeout: got [124], expected [2]
+PASS  empty-command
+CAUGHT old-behavior regression: empty-command — ASSERTION FAILED: CHEAP_CMD refused: got [0], expected [1]
+PASS  empty-expect
+CAUGHT old-behavior regression: empty-expect — ASSERTION FAILED: invalid expectations refuse startup: got [0], expected [1]
+PASS  missing-expect
+CAUGHT old-behavior regression: missing-expect — ASSERTION FAILED: invalid expectations refuse startup: got [0], expected [1]
+PASS  legacy
+CAUGHT old-behavior regression: legacy — ASSERTION FAILED: legacy field refuses startup: got [0], expected [1]
+PASS  untracked
+CAUGHT old-behavior regression: untracked — ASSERTION FAILED: /var/folders/vw/fh_b6s2s4l154vl9dl21lx480000gn/T/tmp.qPnCrtfv6u/output lacks [.wtha/report]
+PASS  defaults
+CAUGHT old-behavior regression: defaults — ASSERTION FAILED: all pinned defaults invoke fake Pi with exact flags: got [2], expected [0]
+PASS  hard
+CAUGHT old-behavior regression: hard — ASSERTION FAILED: .loop/loop.log lacks [attempt 1/3  Coder-Command: bash fake.sh strong]
+PASS  escalation
+CAUGHT old-behavior regression: escalation — ASSERTION FAILED: last attempt succeeds: got [2], expected [0]
+PASS  check-format
+CAUGHT old-behavior regression: check-format — ASSERTION FAILED: --check rejects bad formatting: got [0], expected [1]
+PASS  check-command
+CAUGHT old-behavior regression: check-command — ASSERTION FAILED: --check runs kit check: got [0], expected [1]
+PASS  earlier
+CAUGHT old-behavior regression: earlier — ASSERTION FAILED: no attempt committed: got [3], expected [2]
+PASS  timeout-format
+CAUGHT old-behavior regression: timeout-format — ASSERTION FAILED: format timeout fails attempts: got [0], expected [2]
+PASS  timeout-format-check
+CAUGHT old-behavior regression: timeout-format-check — ASSERTION FAILED: format_check timeout fails attempts: got [0], expected [2]
+PASS  timeout-check
+CAUGHT old-behavior regression: timeout-check — ASSERTION FAILED: check timeout fails attempts: got [0], expected [2]
+All 26 real-loop cases passed; all 26 regressions caught. No model calls.

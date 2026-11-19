@@ -1,0 +1,5 @@
+CAUGHT resume-regrant: tests.test_schedule.ScheduleTests.test_take_resume_join_and_reweight
+CAUGHT partial-invalid-batch: tests.test_state.StateTests.test_enqueue_atomic_first_invalid
+CAUGHT overskip: tests.test_schedule.ScheduleTests.test_take_independent_bounded_mixed_traces
+CAUGHT withdraw-spends-credit: tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty
+PASS four independent scheduling/validation mutants rejected; no sibling edits
