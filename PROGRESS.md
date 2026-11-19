@@ -15,3 +15,6 @@ Remains: later scheduling and adapter work unchanged; whole-tree behavioral acce
 T3: Implement exact resumable take and direct skip; full native corpus/oracle/concurrency
 Changed dwrr/_engine.py: strict atomic take validation, FIFO cyclic selection preserving active visits, and exact whole-idle-cycle skipping without payload operations. Evidence: exact timeout-wrapped schedule command 14/14 PASS (including all 1,839 cases / 44,728 steps, bounded oracle and concurrency); earlier state 9/9 PASS, withdraw 4/4 PASS; kit_check PASS.
 Remains: T4 adapter dispatch and T5 whole-tree behavioral acceptance untouched and not validated. Blocked: nothing.
+T4: Implement public-core wire dispatch; external full replay and 41 protocol checks
+Changed scripts/_adapter.py only: execute() dispatches all eight operations through public Scheduler methods, maps Item/Scheduled to wire dicts with decimal cost strings, and returns the scheduler (new replaces it). Evidence: judge.py driver 4/4 PASS; replay.py 1839 cases / 44728 steps PASS; check_driver.py 41 of 41 PASS; earlier judge.py state 9/9, withdraw 4/4, schedule 14/14 PASS; kit_check PASS.
+Remains: T5 whole-tree/packaging acceptance not run; no source change beyond the adapter. Blocked: nothing.
