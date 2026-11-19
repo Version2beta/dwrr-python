@@ -9,3 +9,6 @@ Remains: T2 (remove_head/drain_queue) and T3 (take) are still stubs. Blocked: no
 T2: Implement FIFO head/drain withdrawal and visit closure
 Changed dwrr/_engine.py only: remove_head and drain_queue validate via _queue, withdraw FIFO without spending credit, and reset the emptied queue's credit; the active visit closes (cursor advances) only when the emptied queue is the active cursor queue. Evidence: judge.py withdraw 4/4 PASS, judge.py state 8/8 PASS, kit_check PASS.
 Remains: T3 (take) is still a stub; T2 did not run the full corpus or concurrency tests. Blocked: nothing.
+T1: Construct/validate state, atomic enqueue/reweight, add/remove queues
+Changed dwrr/_engine.py: accept Item subclasses with isinstance while preserving index-first validation, strict costs and atomic enqueue. Evidence: python3 -B scripts/judge.py state (9/9 PASS), python3 -B scripts/judge.py withdraw (4/4 PASS), python3 -B scripts/kit_check.py (PASS).
+Remains: later scheduling and adapter work unchanged; whole-tree behavioral acceptance not run. Blocked: nothing.

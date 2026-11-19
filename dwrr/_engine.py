@@ -44,8 +44,7 @@ class Engine(Generic[T]):
             raise TypeError("batch must be a list or tuple")
         accepted: list[Item[T]] = []
         for item in items:
-            # Exact type: a subclass could run code (e.g. a property) under the lock.
-            if type(item) is not Item:
+            if not isinstance(item, Item):
                 raise TypeError("batch element must be an Item")
             _check_amount(item.cost, MAX_COST, "zero_cost", "cost_too_large")
             accepted.append(item)
