@@ -1,0 +1,82 @@
+Actual coder implementation verification — 2026-11-19
+Implementation source: b97fc29c0a4776bbb5d41f632aeb37ff1a23986a
+Origin: .loop/execution-final-state.log (verbatim retained state summary)
+Origin SHA-256: 402ea98ba06ee3c8908925dc42dcde6ae2a8564103572a80bd8c3b4c2ffb7541
+No credentials or private filesystem paths are included.
+
+=== final identity ===
+Thu Nov 19 21:00:41 UTC 2026
+spec-loop/python-core-kit
+b97fc29c0a4776bbb5d41f632aeb37ff1a23986a
+=== status (must be empty) ===
+=== staged files (must be empty) ===
+=== loop commits since original stub baseline ===
+b97fc29c0a4776bbb5d41f632aeb37ff1a23986a
+loop: T4 passes (attempt 1)
+Coder-Command: pi --provider anthropic --model claude-haiku-5-5 --thinking high --print --no-session
+
+5f41c31010479ae2fcc614b9af0799218080e2db
+loop: T3 passes (attempt 2)
+Coder-Command: pi --provider openai-codex --model gpt-6.1-sol --thinking high --print --no-session
+
+48bf7a545e4d4f287ab50e5299b4ef2f361403c8
+loop: T1 passes (attempt 2)
+Coder-Command: pi --provider openai-codex --model gpt-6.1-sol --thinking high --print --no-session
+
+97df8025d293a9c79bec379475c710b0dd0914b2
+Correct T1 judge coverage for ordinary Item subclasses
+
+32cf887854b58985573bcf70fe60bd4792c3fa37
+loop: T2 passes (attempt 1)
+Coder-Command: pi --provider anthropic --model claude-haiku-5-5 --thinking high --print --no-session
+
+308adfb00fb2a3598e63fe1233353194a4b62eb5
+loop: T1 passes (attempt 1)
+Coder-Command: pi --provider anthropic --model claude-haiku-5-5 --thinking high --print --no-session
+
+=== diff since corrected kit ===
+ PROGRESS.md         |  9 +++++++++
+ dwrr/_engine.py     | 55 ++++++++++++++++++++++++++++++++++++++++++++++++++---
+ scripts/_adapter.py | 30 ++++++++++++++++++++++++++++-
+ 3 files changed, 90 insertions(+), 4 deletions(-)
+=== protected integrity ===
+PASS kit integrity, syntax, format and external-effect guard
+=== runner/check exit codes ===
+.loop/execution-run.exit=137
+.loop/execution-resume.exit=0
+.loop/execution-final-host315.exit=0
+.loop/execution-final-python311.exit=0
+=== attempt counters ===
+.loop/attempts.T1=2
+.loop/attempts.T2=1
+.loop/attempts.T3=2
+.loop/attempts.T4=1
+=== final whole-tree evidence by interpreter ===
+host315
+PASS tests.test_corpus.CorpusTests.test_all_1839_cases_44728_steps_seven_files
+PASS group all: 31 tests, no skips
+PASS: 1839 cases, 44728 steps, 7 files
+PASS: 41 of 41 checks passed
+PASS archives: pure Python wheel and sdist, MIT, no runtime dependencies
+PASS isolated install and README examples: wheel
+PASS isolated install and README examples: sdist
+PASS isolated install and README examples: checkout
+PASS package checks
+All 26 real-loop cases passed; all 26 regressions caught. No model calls.
+python311
+PASS tests.test_corpus.CorpusTests.test_all_1839_cases_44728_steps_seven_files
+PASS group all: 31 tests, no skips
+PASS: 1839 cases, 44728 steps, 7 files
+PASS: 41 of 41 checks passed
+PASS archives: pure Python wheel and sdist, MIT, no runtime dependencies
+PASS isolated install and README examples: wheel
+PASS isolated install and README examples: sdist
+PASS isolated install and README examples: checkout
+PASS package checks
+All 26 real-loop cases passed; all 26 regressions caught. No model calls.
+=== no STOP ===
+no STOP file
+=== final implementation paths ===
+PROGRESS.md
+dwrr/_engine.py
+scripts/_adapter.py

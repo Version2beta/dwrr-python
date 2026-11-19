@@ -1,6 +1,17 @@
-# Kit verification record
+# Kit and implementation verification record
 
-## Item-subclass judge correction after T2
+Current outcome (2026-11-19): the actual coder implementation at
+`b97fc29c0a4776bbb5d41f632aeb37ff1a23986a` passed all five tasks on CPython 3.15.0
+and 3.11.15. Independent read-only code review reported no issues; it did not
+independently rerun tests. See the final section for retained implementation
+records. Version 0.1.0 remains unuploaded and requires complete owner release
+sign-off. Earlier sections below are historical reachability/correction evidence,
+not claims that the current checkout still contains stubs.
+
+## Historical Item-subclass judge correction after T2 (2026-11-19)
+
+This section describes the correction at `32cf887` and what was pending then,
+not the final implementation state.
 
 At loop-written HEAD `32cf887854b58985573bcf70fe60bd4792c3fa37` (T1 commit
 `308adfb`, then T2), review found enqueue used `type(item) is Item`, rejecting
@@ -33,13 +44,15 @@ The next real runner will select the failing T1 regression for the coder to fix.
 ## Historical preparation snapshot
 
 The following records describe kit preparation at `53d2fa1`, not the current
-partially implemented checkout or this correction's verification. In particular,
+final implemented checkout or the correction's verification. In particular,
 its 30-test full-stage passes do not include the new subclass regression.
 
-**This is kit reachability evidence, not implemented-library completion.** The
-checkout deliberately retains stubs in `dwrr/_engine.py` and `scripts/_adapter.py`.
-No real coder/model call, push or publication occurred. Parent review is required
-before the exact README loop command; publication requires complete owner sign-off.
+**This is kit reachability evidence, not implemented-library completion.** At
+that preparation snapshot, the checkout deliberately retained stubs in
+`dwrr/_engine.py` and `scripts/_adapter.py`.
+No real coder/model call, push or publication had occurred at that point. Parent
+review was required before the README loop command; publication required complete
+owner sign-off (and still does).
 
 ## Authority, ownership and provenance
 
@@ -193,8 +206,99 @@ python3 -B scripts/kit_check.py
 git diff --check
 ```
 
-Residual gates: parent acceptance of this kit; review of real coder output after
-loop; owner complete release sign-off before any PyPI publication. Finite tests
-are not proof of all-sequence conformance, universal thread fairness, OOM recovery
-or speed parity. Live model availability/auth/spending remains untested by design.
-**STOP here: no real coder loop has started.**
+Historical residual gates at preparation: parent acceptance of the kit; review
+of real coder output after loop; complete owner release sign-off before any PyPI
+publication. Finite tests are not proof of all-sequence conformance, universal
+thread fairness, OOM recovery or speed parity. Live model availability/auth/spending
+was untested by design at preparation.
+**Historical preparation STOP: no real coder loop had started at `53d2fa1`.**
+
+## Actual coder implementation verification and acceptance (2026-11-19)
+
+### Source and real model loop
+
+Final implementation source is
+`b97fc29c0a4776bbb5d41f632aeb37ff1a23986a` on
+`spec-loop/python-core-kit`, from original kit `53d2fa1` and project base
+`9fddbb36f6faeeae8a4f5c45227863e1808dbf00`. Parent acceptance preceded authorized
+model calls. The exact configured commands were:
+
+```sh
+CHEAP_CMD='pi --provider anthropic --model claude-haiku-5-5 --thinking high --print --no-session'
+STRONG_CMD='pi --provider openai-codex --model gpt-6.1-sol --thinking high --print --no-session'
+STRONGEST_CMD='pi --provider openai-codex --model gpt-6.1-sol --thinking high --print --no-session'
+```
+
+All use **high**, never the historical STRONGEST default `max`. The actual coder
+command is recorded in each loop commit's trailer (these are real model calls,
+not the fake-coder regression suite):
+
+| Commit | Outcome | Coder |
+| --- | --- | --- |
+| `308adfb00fb2a3598e63fe1233353194a4b62eb5` | T1 attempt 1 passed the then-current judge | CHEAP |
+| `32cf887854b58985573bcf70fe60bd4792c3fa37` | T2 attempt 1 passed | CHEAP |
+| `97df8025d293a9c79bec379475c710b0dd0914b2` | Parent's protected Item-subclass judge correction | No coder change |
+| `48bf7a545e4d4f287ab50e5299b4ef2f361403c8` | T1 attempt 2 passed the corrected 9-test judge | STRONG |
+| `5f41c31010479ae2fcc614b9af0799218080e2db` | T3 attempt 2 passed | STRONG |
+| `b97fc29c0a4776bbb5d41f632aeb37ff1a23986a` | T4 attempt 1 passed | CHEAP |
+
+The first invocation was interrupted (recorded exit 137) after T2/during T3.
+Following the protected correction described above, the resumed invocation exited
+0 with `every task passes`. T5 required no additional coder edit or commit.
+Final attempt counters were T1=2, T2=1, T3=2, T4=1. Only the engine, adapter and
+coder progress notes changed during implementation relative to the corrected kit;
+no reference substitution, sibling edits, push or publication completed the work.
+
+### Retained actual implementation results
+
+These selected sanitized final records are copied from ignored `.loop/` records,
+with origin names and SHA-256 digests. They contain no credentials or private
+filesystem paths. Interpreter logs retain exact PASS lines, including test IDs,
+while omitting detailed fake-coder failure diagnostics containing temporary paths:
+
+- `verification/execution-final-state.log`: final source/branch/clean status,
+  commit trailers, attempt counts, successful final check exits and no STOP.
+- `verification/execution-final-host315.log`: CPython 3.15.0 runner and T5 results.
+- `verification/execution-final-python311.log`: CPython 3.11.15 runner and T5 results.
+
+Both final `loop.sh --check` invocations exited **0** and reported T1–T5 pass:
+
+| Check on actual implementation | Both interpreters |
+| --- | --- |
+| Whole Python suite | 31 tests, no skips (corrected subclass regression included) |
+| Native and unchanged external replay | 1,839 cases / 44,728 steps / seven files |
+| Unchanged protocol checker | 41 of 41 checks |
+| Independent bounded naive oracle | Included in scheduling tests; not production/reference helpers |
+| Concurrency/finalizer and exact numeric/skip fixtures | Included in whole suite |
+| Archives and installed README examples | Wheel, sdist, checkout; isolated imports outside source tree |
+| Fake-coder runner regressions | 26 cases passed, all 26 old-behavior regressions caught |
+| Protected integrity/format/effects guard | Pass |
+
+The `No model calls` line in the runner-regression summary describes that harness
+only; it does not negate the actual model loop. The observed host/runtime/build
+qualifications in the historical environment section also apply to these recorded
+final checks. Exact check/setup commands and remaining handoff are in TESTING.md.
+
+### Independent review and remaining gate
+
+The documentation-task handoff reports independent **read-only source review**
+of the actual loop-written code with **no issues**. This is code acceptance, not
+an independent test rerun; the test evidence above is from the actual execution
+records, not an attributed reviewer run. The original preparation-only STOP and
+post-loop code-review gate are complete.
+
+This final documentation refresh changes no implementation behavior, acceptance
+tests or judge expectations. Protected documentation/evidence and their inventory
+hashes are parent-author maintenance outside the coder loop. Version stays 0.1.0;
+complete owner release sign-off and an explicitly authorized PyPI handoff remain
+required. No upload, push, merge or tag is performed or implied. Finite corpus,
+bounded oracle and source review are not proof of all-sequence conformance,
+universal thread fairness, actual OOM recovery or performance parity. Hosted CI,
+other platforms and untested runtimes are not claimed.
+
+Documentation-refresh validation against the actual implementation: integrity
+(`python3 -B scripts/kit_check.py`) and `git diff --check` passed; focused
+`python3 -B scripts/package_check.py` passed on both 3.15.0 and 3.11.15 with the
+refreshed README. Both examples and their expected output were verified unchanged;
+task commands/expectations were unchanged (only TESTING.md protection was added).
+The expensive runner regressions were not rerun solely for these docs edits.

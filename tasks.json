@@ -8,7 +8,7 @@
     "^dwrr/(__init__|_contracts|_state)\\.py$",
     "^scripts/(loop|test_loop)\\.sh$",
     "^scripts/(wire|conformance_driver|judge|kit_check|package_check)\\.py$",
-    "^(README\\.md|SPEC\\.md|KIT-VERIFICATION\\.md|PROMPT\\.md|tasks\\.json|kit-manifest\\.json|pyproject\\.toml|MANIFEST\\.in|LICENSE|\\.gitignore)$"
+    "^(README\\.md|SPEC\\.md|KIT-VERIFICATION\\.md|TESTING\\.md|PROMPT\\.md|tasks\\.json|kit-manifest\\.json|pyproject\\.toml|MANIFEST\\.in|LICENSE|\\.gitignore)$"
   ],
   "tasks": [
     {

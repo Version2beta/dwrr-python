@@ -1,0 +1,86 @@
+Actual coder implementation verification — 2026-11-19
+Implementation source: b97fc29c0a4776bbb5d41f632aeb37ff1a23986a
+Runtime: CPython 3.11.15 (minimum)
+Command: PATH="$(dirname "$(uv python find 3.11)"):$PATH" bash scripts/loop.sh --check
+Selection: runner result and exact PASS/whole-suite summary lines from final T5 stdout.
+Detailed protocol ok lines and fake-coder CAUGHT diagnostics omitted (temporary paths).
+The final No model calls line describes fake-coder regressions, NOT the actual coder loop.
+These finite checks are not an all-sequences proof.
+Origin: .loop/execution-final-python311.exit SHA-256: 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa
+Origin: .loop/execution-final-python311.stdout SHA-256: df5c996c026e8c26a583128e6cd860bcb032ab00574b667e0e1a49db235af076
+Origin: .loop/execution-final-python311-test.4.stdout SHA-256: 8ca55da6e415c41273b14d312d240be2e82264b39d0b6ec32bdc0b02269b92ac
+
+Runner exit: 0
+pass  T1  Construct/validate state, atomic enqueue/reweight, add/remove queues
+pass  T2  Implement FIFO head/drain withdrawal and visit closure
+pass  T3  Implement exact resumable take and direct skip; full native corpus/oracle/concurrency
+pass  T4  Implement public-core wire dispatch; external full replay and 41 protocol checks
+pass  T5  Whole tree: integrity/format, all tests, external protocol, archives/isolated README installs, runner regression
+
+Selected final T5 stdout:
+PASS tests.test_state.StateTests.test_constructor_and_queue_defaults
+PASS tests.test_state.StateTests.test_enqueue_atomic_first_invalid
+PASS tests.test_state.StateTests.test_enqueue_item_subclass_preserves_payload_and_cost
+PASS tests.test_state.StateTests.test_index_precedence
+PASS tests.test_state.StateTests.test_python_batch_domain
+PASS tests.test_state.StateTests.test_quantum_validation_preserves_visit
+PASS tests.test_state.StateTests.test_records_and_payloads
+PASS tests.test_state.StateTests.test_remove_queue_releases_payload
+PASS tests.test_state.StateTests.test_remove_queue_repairs_cursor_and_reuse
+PASS tests.test_withdraw.WithdrawTests.test_drain_queue_closes_only_matching_visit
+PASS tests.test_withdraw.WithdrawTests.test_empty_drain_is_fresh_noop
+PASS tests.test_withdraw.WithdrawTests.test_remove_head_preserves_credit_until_empty
+PASS tests.test_withdraw.WithdrawTests.test_withdraw_validation_atomic
+PASS tests.test_schedule.ScheduleTests.test_take_example_exact_order
+PASS tests.test_schedule.ScheduleTests.test_take_head_blocking_zero_huge_request
+PASS tests.test_schedule.ScheduleTests.test_take_independent_bounded_mixed_traces
+PASS tests.test_schedule.ScheduleTests.test_take_maximum_skip_and_tie_cursor
+PASS tests.test_schedule.ScheduleTests.test_take_payload_identity_no_effects_and_release
+PASS tests.test_schedule.ScheduleTests.test_take_peak_credit_and_withdraw_exposed_head
+PASS tests.test_schedule.ScheduleTests.test_take_resume_join_and_reweight
+PASS tests.test_schedule.ScheduleTests.test_take_split_and_continuously_backlogged_fairness
+PASS tests.test_schedule.ScheduleTests.test_take_validation_atomic
+PASS tests.test_concurrency.ConcurrencyTests.test_concurrent_batches_and_takes_conserve_fifo_without_interleaving
+PASS tests.test_concurrency.ConcurrencyTests.test_concurrent_take_returns_complete_serial_slices
+PASS tests.test_concurrency.ConcurrencyTests.test_every_operation_lock_covers_entire_engine_call
+PASS tests.test_concurrency.ConcurrencyTests.test_remove_queue_releases_payload_after_unlock
+PASS tests.test_corpus.CorpusTests.test_all_1839_cases_44728_steps_seven_files
+PASS tests.test_driver.DriverTests.test_dispatch_every_operation_and_fresh_new
+PASS tests.test_driver.DriverTests.test_huge_json_integer_roundtrip_without_global_setting
+PASS tests.test_driver.DriverTests.test_protocol_first_all_items_and_json_domain
+PASS tests.test_driver.DriverTests.test_unused_fields_wire_uint64_and_errors_continue
+PASS group all: 31 tests, no skips
+PASS: 1839 cases, 44728 steps, 7 files
+PASS: 41 of 41 checks passed
+PASS archives: pure Python wheel and sdist, MIT, no runtime dependencies
+PASS isolated install and README examples: wheel
+PASS isolated install and README examples: sdist
+PASS isolated install and README examples: checkout
+PASS package checks
+PASS  search-count
+PASS  notes
+PASS  notes-cross-task
+PASS  judge-writes
+PASS  formatter-protected
+PASS  good
+PASS  formatted
+PASS  protected
+PASS  substring
+PASS  stderr
+PASS  nonzero
+PASS  hang
+PASS  empty-command
+PASS  empty-expect
+PASS  missing-expect
+PASS  legacy
+PASS  untracked
+PASS  defaults
+PASS  hard
+PASS  escalation
+PASS  check-format
+PASS  check-command
+PASS  earlier
+PASS  timeout-format
+PASS  timeout-format-check
+PASS  timeout-check
+All 26 real-loop cases passed; all 26 regressions caught. No model calls.

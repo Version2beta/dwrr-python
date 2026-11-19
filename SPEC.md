@@ -1,15 +1,21 @@
 # dwrr-python supporting specification
 
-**Status: owner-approved bounded implementation contract; kit contains stubs.**
-Subordinate to [README.md](README.md). Explicit owner approvals for this preparation
-supersede historical unapproved prose. Private-reference results verify the kit,
-not the not-yet-written product. No real coder loop before parent acceptance.
+**Status: implemented and locally accepted; not published (0.1.0).**
+Subordinate to [README.md](README.md). The authorized spec-loop implementation at
+`b97fc29c0a4776bbb5d41f632aeb37ff1a23986a` passed T1–T5 on CPython 3.11.15 and
+3.15.0; independent read-only code review reported no issues (not a test rerun).
+Explicit owner approvals supersede historical unapproved prose. Historical private
+reference results establish kit reachability only; actual implementation results
+are recorded separately in KIT-VERIFICATION.md. Publication requires complete
+owner sign-off.
 
 ## 1. Scope and authority
 
 Approved first usable stage: Python core, typed records, six-code exception,
 exact direct idle-round calculation, and dev/test conformance driver, with the
-checks mapped in §7. All eight shared operations are included. The protected kit and intentional stubs implement the preparation gate only.
+checks mapped in §7. All eight shared operations are implemented. The protected
+kit remains the verification boundary; its original stubs were replaced by the
+actual coder loop, not by the private reachability reference.
 
 The behavioral reference is `../dwrr-spec/SPEC.md` **0.1.1 (draft)**, §§2–8;
 the wire reference is its `PROTOCOL.md` **0.1.1 (draft)**. Read the current checked
@@ -358,8 +364,9 @@ The historical upstream tools at the commit below have these summaries:
 `PASS: 36 of 36 checks passed`. The intentionally corrected working-tree
 checker now expects `PASS: 41 of 41 checks passed`; its source hash is recorded
 below, separately from that historical commit. All prior checks and corpus bytes
-remain. Current results are recorded in KIT-VERIFICATION.md for the private reference
-only. Frozen fixtures preserve source bytes, hashes, provenance and MIT license. Upstream's live
+remain. KIT-VERIFICATION.md separates historical private-reference results from
+actual implementation passes, including the 41-check result. Frozen fixtures
+preserve source bytes, hashes, provenance and MIT license. Upstream's live
 generating/fuzzing/shrinking harness is planned, not available evidence.
 
 ## 8. Source provenance and ambiguity resolution
@@ -501,8 +508,9 @@ promises; detected driver MemoryError/OverflowError exits 1 with a resource-only
 diagnostic and no response for the failed line or later processing. No actual
 huge allocation/OOM recovery is promised or attempted.
 
-Only `dwrr/_engine.py` and `scripts/_adapter.py` are implementation files;
-PROGRESS.md may receive coder notes. Every other tracked kit path is protected,
+Within the coder loop, only `dwrr/_engine.py` and `scripts/_adapter.py` were
+writable implementation files; PROGRESS.md could receive coder notes. Every other
+tracked kit path remains protected,
 including contracts, parser, locking facade, State seam, tests, frozen tools/corpus,
 packaging and runner. The guard allows syntax-valid unfinished later stubs during
 incremental tasks. No fixture-specific shortcuts, fallback model imports, shared
@@ -510,7 +518,13 @@ oracle helpers, test rewriting, global interpreter-setting changes or external
 core effects are allowed. Source review remains mandatory: finite checks cannot
 prove all-sequence parity or eliminate adversarial implementations.
 
-Private reference is outside repo/coder kit, authored solely to prove reachability;
-it is never imported as a fallback. Verification temporarily swaps only the two
-owned stub files and restores them afterward. No coder/model call is made at
-preparation. Parent acceptance is required before the exact README loop command.
+Historically, a private reference outside the repo/coder kit was authored solely
+to prove reachability. Preparation temporarily swapped only the two owned stub
+files and restored them; no coder/model call occurred during that preparation.
+After parent acceptance, the authorized real loop wrote the implementation and
+passed all five tasks at `b97fc29`; no reference fallback is present. The original
+pre-loop STOP is no longer a current implementation gate. Protected documentation,
+evidence and manifest maintenance after code acceptance is parent-author work,
+not a relaxation of coder-loop permissions. See TESTING.md for exact check commands
+and the remaining owner release approval/PyPI handoff. Finite tests and source
+review do not establish all-sequence conformance or authorize publication.
