@@ -2,6 +2,7 @@
   "format_check": "python3 -B scripts/kit_check.py",
   "check": "python3 -B scripts/kit_check.py",
   "protected": [
+    "^examples/fair_transfer/",
     "^tests/",
     "^vendor/",
     "^verification/",

@@ -66,6 +66,14 @@ Expected output:
 [(0, 'a', 2), (0, 'b', 2), (1, 'x', 4), (1, 'y', 1)]
 ```
 
+## Fair file-transfer example
+
+[Standalone simulator](examples/fair_transfer/README.md): pretend FIFO transfers
+with Basic/Team/Business byte quanta of 1024/2048/4096. It prints selection order
+and cumulative bytes using repeated `take(1)` calls, with no real transfer I/O.
+The example explains byte fairness, head blocking and why finite totals need not
+be 1:2:4. Run it against a locally installed checkout; it is not packaged.
+
 ## Public API
 
 `T` is the opaque payload type. `Item(value, cost)` and
@@ -192,7 +200,8 @@ payload is visible; the scheduler neither protects nor deep-copies it.
 Not included: job execution, worker pools, blocking dequeue, backpressure, queue
 capacity/admission policy, keyed queues, priority levels, deadlines, persistence,
 distributed fairness, async wrappers or a production CLI. The dev/test
-conformance driver is the only stdio interface; it is not a general command tool.
+conformance driver is the only protocol stdio interface; it is not a general
+command tool. The checkout-only fair-transfer example prints a simulation.
 No configuration precedence, secrets management or `doctor` command is needed.
 
 ## Compatibility and verification

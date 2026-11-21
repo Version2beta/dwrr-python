@@ -63,6 +63,21 @@ other-platform pass is claimed. Protected docs/evidence changes require manifest
 hash maintenance by the parent author outside the coder loop; never edit tests or
 task expectations to make a documentation refresh pass.
 
+## Fair-transfer example checks
+
+With this checkout installed in the active Python environment, run the separate
+standard-library example tests (not part of the frozen 31-test core judge):
+
+```sh
+(cd examples/fair_transfer && python -B -m unittest discover -s tests -v)
+```
+
+See [the example README](examples/fair_transfer/README.md) for installation and
+execution from outside the checkout. Its five tests pin full output, order,
+FIFO/conservation, resumed single-item takes, and no transfer I/O or sleeps.
+Example source, docs and tests are protected inventory entries; they are excluded
+from library archives. No core API or frozen core test expectations changed.
+
 ## Remaining release gate
 
 - Obtain complete owner release sign-off; implementation/code acceptance is not
