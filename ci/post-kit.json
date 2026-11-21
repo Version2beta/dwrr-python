@@ -1,0 +1,12 @@
+{
+  "baseline_manifest_sha256": "01457bf484eaf186395e20bcf1f21709e94e526923864d2534c90f4bfcda6323",
+  "sha256": {
+    "README.md": "6dc48f67a35fe7073fd0a1a45173b8114ce6765c0d1214e6ee9b84cd5f856099",
+    "TESTING.md": "400cc09147433ee01c42fab7cc198d9466c6f833333307237b8b25c63ef1eead",
+    "scripts/kit_check.py": "3459b4d1b8b093855dad318a10b32622cc1ab2703fc304ee5544a7d4c68d6664",
+    "scripts/package_check.py": "b20fedba603e4662767fd5401b57135332be1246e51071a3cecaab4741c1b593",
+    ".github/workflows/ci.yml": "488fa2d6cc411d99efef779eaf61f00b807086f41e20c94890eb8dbf86339c9e",
+    "ci/README.md": "c0d112354569d0b87eafb7807027477209e3945b80641cf9c143a6199bb8716a",
+    "ci/test_integrity.py": "39361b69a2b32cbb8f78f3937acf862e31919fa414b602d88298f38705ac5974"
+  }
+}

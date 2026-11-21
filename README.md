@@ -4,6 +4,34 @@ A cost-aware FIFO scheduler for Python applications sharing a consumer among
 producers. The library is implemented and locally verified; version **0.1.0** is
 not uploaded to PyPI. Publication still requires complete owner sign-off.
 
+## Other languages
+
+- [DWRR for Go](https://github.com/version2beta/dwrr)
+- [DWRR for Elixir](https://github.com/version2beta/dwrr-elixir)
+
+These libraries share fixed-quantum scheduling semantics, with language-specific
+APIs and additional features. See each library's README for its supported contract.
+
+## Shared specification
+
+[dwrr-spec](https://github.com/version2beta/dwrr-spec) defines the shared
+[fixed-quantum contract](https://github.com/version2beta/dwrr-spec/blob/main/SPEC.md),
+[conformance corpus](https://github.com/version2beta/dwrr-spec/tree/main/corpus)
+and [driver protocol](https://github.com/version2beta/dwrr-spec/blob/main/PROTOCOL.md) /
+[conformance tools](https://github.com/version2beta/dwrr-spec/tree/main/tools).
+They let implementations with different APIs check the same service order,
+errors and numeric limits rather than rely on similar-looking algorithms.
+This is a development/conformance resource, **not a runtime dependency**.
+Pinned revisions and vendored snapshots make checks reproducible; they do not
+automatically track current spec source or establish all-sequences conformance.
+
+This implementation targets draft 0.1.1 using the vendored snapshot from
+`243dd125470365df2c52a6ce72de3ee8ecfce3fe`; see
+[vendor provenance](vendor/shared/PROVENANCE.md) and the local [mapping](SPEC.md).
+Mutable state, whole-operation locking and Python-domain exceptions are local
+API choices, not requirements imposed on Go or Elixir. CI replays the vendored
+corpus/tools, not an automatically refreshed upstream checkout.
+
 ## The need
 
 Python application authors sharing a consumer among producers get a cost-aware
@@ -39,7 +67,7 @@ python3 -m pip install .
 Setuptools builds an ordinary pure-Python wheel/sdist. Local version is `0.1.0`;
 there is no published-package installation command yet.
 The dev/test driver and frozen verification kit are checkout-only, not installed
-CLI entry points. No repository URL or PyPI release claim is made. The core needs
+CLI entry points. No public PyPI release is claimed. The core needs
 no Go, Elixir, credentials, configuration or network service.
 
 ## First useful example

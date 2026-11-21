@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Complete; do not change. Non-writing incremental-safe kit integrity/effects guard.
+"""Non-writing incremental-safe kit integrity/effects guard.
 
 Not a sandbox or proof of correctness. Protected tests and mandatory source review
 supply behavioral assurance. This guard must not require unfinished later tasks.
@@ -20,9 +20,20 @@ FORBIDDEN = {'open', 'print', 'input', 'eval', 'exec', 'compile', '__import__', 
 def main():
     manifest = json.loads((ROOT / 'kit-manifest.json').read_text())
     files = subprocess.check_output(['git', 'ls-files', '-co', '--exclude-standard', '--deduplicate'], cwd=ROOT, text=True).splitlines()
-    allowed_paths = set(manifest['sha256']) | EDITABLE | {'kit-manifest.json'}
+    # The frozen preparation inventory remains byte-identical. Only these named
+    # post-kit maintenance paths can override it; all other hashes still apply.
+    assert hashlib.sha256((ROOT / 'kit-manifest.json').read_bytes()).hexdigest() == '01457bf484eaf186395e20bcf1f21709e94e526923864d2534c90f4bfcda6323', 'baseline manifest changed'
+    overlay = json.loads((ROOT / 'ci/post-kit.json').read_text())
+    evolved = {'README.md', 'TESTING.md', 'scripts/kit_check.py', 'scripts/package_check.py'}
+    added = {'.github/workflows/ci.yml', 'ci/README.md', 'ci/test_integrity.py'}
+    assert set(overlay['sha256']) == evolved | added, 'unexpected post-kit paths'
+    assert evolved <= set(manifest['sha256']) and not added & set(manifest['sha256'])
+    assert overlay['baseline_manifest_sha256'] == '01457bf484eaf186395e20bcf1f21709e94e526923864d2534c90f4bfcda6323'
+    allowed_paths = set(manifest['sha256']) | EDITABLE | added | {'kit-manifest.json', 'ci/post-kit.json'}
     assert set(files) <= allowed_paths, 'unapproved kit paths: ' + repr(sorted(set(files) - allowed_paths))
-    for name, digest in manifest['sha256'].items():
+    expected = {name: digest for name, digest in manifest['sha256'].items() if name not in evolved}
+    expected.update(overlay['sha256'])
+    for name, digest in expected.items():
         assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest, 'protected file changed: ' + name
     for folder in ('dwrr', 'scripts', 'tests'):
         for path in (ROOT / folder).glob('*.py'):

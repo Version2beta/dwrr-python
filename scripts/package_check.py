@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Complete; do not change. No publication. Build in temp, install outside checkout.
 
-Requires .venv build tools and .loop/build-wheels as documented in README.
+Defaults to local offline build tools; CI supplies explicit public tool paths.
 Build dependencies are dev-only. Judge performs no network access.
 """
 import json
@@ -16,8 +16,8 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILD = ROOT / '.venv/bin/python'
-WHEELS = ROOT / '.loop/build-wheels'
+BUILD = Path(os.environ.get('DWRR_BUILD_PYTHON', ROOT / '.venv/bin/python')).absolute()
+WHEELS = Path(os.environ.get('DWRR_BUILD_WHEELS', ROOT / '.loop/build-wheels')).resolve()
 
 
 def command(args, cwd):

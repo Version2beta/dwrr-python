@@ -59,8 +59,10 @@ bash scripts/test_loop.sh
 The runner regression suite uses fake coders in disposable repos and reports
 26 cases passed / 26 regressions caught with no model calls. This is distinct
 from the actual implementation loop's authorized model calls. No hosted CI or
-other-platform pass is claimed. Protected docs/evidence changes require manifest
-hash maintenance by the parent author outside the coder loop; never edit tests or
+other-platform pass is claimed. The new push/PR configuration and its narrow
+post-kit integrity evolution are documented in [ci/README.md](ci/README.md);
+configuration is not a passing hosted result. Protected docs/evidence changes require reviewed inventory
+maintenance outside the coder loop (the original baseline is retained); never edit tests or
 task expectations to make a documentation refresh pass.
 
 ## Fair-transfer example checks
