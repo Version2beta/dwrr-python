@@ -3,8 +3,10 @@
 The preparation manifest remains unchanged (SHA-256 `01457bf484eaf186395e20bcf1f21709e94e526923864d2534c90f4bfcda6323`).
 `post-kit.json` records only the four explicitly evolved files and three new
 CI assets named in `scripts/kit_check.py`. README evolution includes the owner's
-pre-existing language crosslinks and the authorized shared-spec explanation. No vendor assets, tests, task expectations or
-original provenance records are replaced. All other baseline hashes and the
+pre-existing language crosslinks, the authorized shared-spec explanation, and
+the authorized published-0.1.0 installation/status and checkout-link corrections.
+No vendor assets, tests, task expectations or original provenance records are
+replaced. All other baseline hashes and the
 source effect/syntax checks still apply; unlisted files are rejected. Like the
 original inventory, this is a reviewed integrity record, not a signature or a
 sandbox. Inventory changes require owner review, not automatic rehashing.
