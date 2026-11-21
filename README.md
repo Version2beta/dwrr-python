@@ -1,8 +1,8 @@
 # dwrr-python
 
 A cost-aware FIFO scheduler for Python applications sharing a consumer among
-producers. The library is implemented and locally verified; version **0.1.0** is
-not uploaded to PyPI. Publication still requires complete owner sign-off.
+producers. Version **0.1.0** is published on
+[PyPI](https://pypi.org/project/dwrr-python/0.1.0/) from source commit `717737c`.
 
 ## Other languages
 
@@ -27,7 +27,7 @@ automatically track current spec source or establish all-sequences conformance.
 
 This implementation targets draft 0.1.1 using the vendored snapshot from
 `243dd125470365df2c52a6ce72de3ee8ecfce3fe`; see
-[vendor provenance](vendor/shared/PROVENANCE.md) and the local [mapping](SPEC.md).
+[vendor provenance](https://github.com/version2beta/dwrr-python/blob/717737c/vendor/shared/PROVENANCE.md) and the local [mapping](SPEC.md).
 Mutable state, whole-operation locking and Python-domain exceptions are local
 API choices, not requirements imposed on Go or Elixir. CI replays the vendored
 corpus/tools, not an automatically refreshed upstream checkout.
@@ -42,8 +42,7 @@ measure execution time or run jobs.
 
 ## At a glance
 
-- Import: `dwrr`; distribution: `dwrr-python` (owner confirms availability).
-  Install locally from this checkout; no public release is claimed.
+- Import: `dwrr`; published distribution: `dwrr-python` 0.1.0.
 - Python >= 3.11; standard library only at runtime. The actual implementation
   passed the frozen checks on CPython 3.11.15 and 3.15.0 (Darwin arm64).
 - A mutable, generic `Scheduler[T]` with explicit `Item[T]` inputs and
@@ -54,20 +53,28 @@ measure execution time or run jobs.
 - Implements language-neutral **dwrr-spec 0.1.1 (draft)**: all eight operations,
   all six errors, exact limits and service order. Finite conformance checks pass;
   they are not proof for every possible operation sequence.
-- MIT license; no runtime dependencies. Local initial version `0.1.0`.
+- MIT license; no runtime dependencies. Published version `0.1.0`.
 
 ## Requirements and installation
 
-Install from this checkout (Python >= 3.11):
+Install the published package in your environment (Python >= 3.11):
 
 ```sh
+python3 -m pip install dwrr-python==0.1.0
+```
+
+For development, clone the repository and install from its root instead:
+
+```sh
+git clone https://github.com/version2beta/dwrr-python.git
+cd dwrr-python
 python3 -m pip install .
 ```
 
-Setuptools builds an ordinary pure-Python wheel/sdist. Local version is `0.1.0`;
-there is no published-package installation command yet.
+Setuptools builds an ordinary pure-Python wheel/sdist.
 The dev/test driver and frozen verification kit are checkout-only, not installed
-CLI entry points. No public PyPI release is claimed. The core needs
+CLI entry points. Links to checkout-only documentation below point to GitHub
+because those files are not included in the installed distribution. The core needs
 no Go, Elixir, credentials, configuration or network service.
 
 ## First useful example
@@ -96,7 +103,7 @@ Expected output:
 
 ## Fair file-transfer example
 
-[Standalone simulator](examples/fair_transfer/README.md): pretend FIFO transfers
+[Standalone simulator](https://github.com/version2beta/dwrr-python/blob/717737c/examples/fair_transfer/README.md): pretend FIFO transfers
 with Basic/Team/Business byte quanta of 1024/2048/4096. It prints selection order
 and cumulative bytes using repeated `take(1)` calls, with no real transfer I/O.
 The example explains byte fairness, head blocking and why finite totals need not
@@ -245,18 +252,20 @@ behavior and inspected sources. The actual loop-written implementation at
   examples executed against installed code.
 
 Independent read-only code review reported no issues; it was not an independent
-test rerun. [KIT-VERIFICATION.md](KIT-VERIFICATION.md) separates historical kit
+test rerun. [KIT-VERIFICATION.md](https://github.com/version2beta/dwrr-python/blob/717737c/KIT-VERIFICATION.md) separates historical kit
 reachability from actual implementation evidence and its limitations.
-[TESTING.md](TESTING.md) records reproducible checks and the remaining release gate.
-Other runtimes/platforms, hosted CI, universal thread fairness, resource-exhaustion
-recovery and performance parity are not demonstrated.
+[TESTING.md](https://github.com/version2beta/dwrr-python/blob/717737c/TESTING.md) records reproducible checks and the historical pre-publication gate.
+Hosted CI subsequently passed on Python 3.11 and 3.14 for the released source
+([run](https://github.com/Version2beta/dwrr-python/actions/runs/44952235531)).
+Other runtimes/platforms, universal thread fairness, resource-exhaustion recovery
+and performance parity are not demonstrated.
 
 Compatibility is with the shared fixed-integer-quantum contract, not every sibling
 feature: no Go callable quanta, floats or speculative scheduling; no Elixir
 immutable branching or GenServer wrapper. See SPEC §8 for historical source and
 adapter qualifications; sibling approvals do not authorize Python decisions.
 
-## Owner decisions and release gate
+## Owner decisions and historical release gate
 
 The explicit owner approvals supplied for kit preparation supersede the historical
 unapproved draft and handoff. No approval is inferred from sibling work.
@@ -269,11 +278,11 @@ unapproved draft and handoff. No approval is inferred from sibling work.
 | D4 | Python >=3.11, `dwrr`, `dwrr-python` (owner says available), MIT, no runtime dependencies. |
 | D5 | Full frozen conformance, independent bounded naive oracle, exact skip, examples and isolated/archive installs. |
 
-Local packaging: setuptools pure-Python wheel/sdist, initial `0.1.0`; no optional
-runtime modules or speculative scaffolding. Publishing is in scope **only after
-complete owner sign-off**, never automatically in a task.
-Pushes and sibling changes are not authorized here. Hosted CI and performance
-claims are not part of this bounded implementation.
+Packaging: setuptools pure-Python wheel/sdist, published `0.1.0`; no optional
+runtime modules or speculative scaffolding. The original release gate required
+complete owner sign-off before publication; the release is now public. This
+record authorizes no further publication, pushes or sibling changes. Historical
+verification above is not evidence of a hosted CI pass or performance guarantees.
 
 ## Historical spec-loop operations (2026-11-19)
 
@@ -283,7 +292,7 @@ edits integrated. Preparation commit `53d2fa1` intentionally contained stubs and
 required parent acceptance before model calls. That preparation-only STOP is
 historical: the authorized real loop subsequently implemented the engine and
 adapter, ending at `b97fc29`; T1–T5 and independent source review passed.
-No push or publication followed.
+No push or publication followed that loop run; publication of 0.1.0 occurred later.
 
 The five-task kit limited coder writes to `dwrr/_engine.py`,
 `scripts/_adapter.py` and notes in `PROGRESS.md`; the other artifacts are protected
