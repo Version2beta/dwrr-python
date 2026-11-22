@@ -72,7 +72,7 @@ python3 -m pip install .
 ```
 
 Setuptools builds an ordinary pure-Python wheel/sdist.
-The dev/test driver and frozen verification kit are checkout-only, not installed
+The dev/test driver and verification tools are checkout-only, not installed
 CLI entry points. Links to checkout-only documentation below point to GitHub
 because those files are not included in the installed distribution. The core needs
 no Go, Elixir, credentials, configuration or network service.
@@ -131,7 +131,7 @@ precedence. Costs cannot be changed after acceptance through the supported API.
 
 Exports also include `SchedulerError`, `MAX_COST` and `MAX_QUANTUM`. There is no
 public state-editing, inspection, copying, reset, iterator or persistence API in
-this stage. Lists returned by operations are independent containers. Record
+this library. Lists returned by operations are independent containers. Record
 identity is not promised; payload identity is.
 
 ### Withdrawal and recovery
@@ -213,7 +213,7 @@ numeric objects. Count must be nonnegative. Negative costs/quanta and negative
 count raise ordinary `ValueError`, not a new shared error code. Wrong argument
 or batch-element types raise `TypeError`. All documented validation failures
 preserve state. Precise validation order is in [SPEC §3](SPEC.md#3-validation-and-errors).
-These Python-domain rules are approved additions where the language-neutral
+These Python-domain rules are local additions where the language-neutral
 spec does not define an input. Arbitrary iterables/generators are not accepted
 as batches. Resource exhaustion, process termination, forged private state,
 bypassing record immutability and concurrent input-batch mutation are outside
@@ -242,8 +242,8 @@ No configuration precedence, secrets management or `doctor` command is needed.
 ## Compatibility and verification
 
 [SPEC.md](SPEC.md) is subordinate to this README and pins the shared draft 0.1.1
-behavior and inspected sources. The actual loop-written implementation at
-`b97fc29` passed T1–T5 on CPython 3.11.15 and 3.15.0 on 2026-11-19:
+behavior and inspected sources. The implementation at
+`b97fc29` passed the historical verification gates on CPython 3.11.15 and 3.15.0 on 2026-11-19:
 
 - All 31 Python tests, including native replay of **1,839 cases / 44,728 steps
   in seven files**, an independent bounded naive oracle and concurrency checks.
@@ -263,8 +263,9 @@ and performance parity are not demonstrated.
 Compatibility is with the shared fixed-integer-quantum contract, not every sibling
 feature: no Go callable quanta, floats or speculative scheduling; no Elixir
 immutable branching or GenServer wrapper. See SPEC §8 for historical source and
-adapter qualifications; sibling approvals do not authorize Python decisions.
+adapter qualifications.
 
+<!-- site:skip -->
 ## Owner decisions and historical release gate
 
 The explicit owner approvals supplied for kit preparation supersede the historical
@@ -320,3 +321,4 @@ The fake-coder runner regression suite uses no models; the implementation loop
 did use the authorized models. See KIT-VERIFICATION for the commit sequence and
 TESTING for check/setup commands. Never clear a future `STOP` or discard owner
 changes blindly; no push, merge, tag or publish is part of this workflow.
+<!-- /site:skip -->
